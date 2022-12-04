@@ -24,13 +24,13 @@ struct Move{
 	Move(uint8_t aFrom, uint8_t aTo, uint8_t aSpecial, uint8_t aFromtype);
 };
 
-inline void wPmoves(int coordinate, std::vector<Move*>& Moves);
+inline void wPmoves(int coordinate, std::vector<Move>& Moves);
 
-inline void bPmoves(int coordinate, std::vector<Move*>& Moves);
+inline void bPmoves(int coordinate, std::vector<Move>& Moves);
 
-void TableMoves(uint64_t a,int colour, std::vector<Move*>& Moves,int position,int type);
+void TableMoves(uint64_t a,int colour, std::vector<Move>& Moves,int position,int type);
 
-void GenerateMoves(int colour, std::vector<Move*>& Moves);
+void GenerateMoves(int colour, std::vector<Move>& Moves);
 
 Move make_move(Move& move, bool colour);
 

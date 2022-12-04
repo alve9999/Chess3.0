@@ -9,6 +9,7 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include "src/Evaluation.h"
 
 using namespace std;
 
@@ -41,7 +42,7 @@ int main(){
     chess_pattern(window, White_square, Black_square);
     draw_board(window);
     window.display();
-	std::vector<Move*> Moves;
+	std::vector<Move> Moves;
 
 	//your turn loop
 	bool colour = 1;
@@ -87,11 +88,10 @@ int main(){
 								board.colours[colour] ^= 1ULL << (position->x / 150 + 8 * ((position->y) / 150));
 								sf::Vector2i to = move_piece(window, White_square, Black_square, movedpiece, colour);
 								for (int i = 0; i < Moves.size(); i++) {
-									if ((to.x / 150 + 8 * (to.y / 150)) == Moves[i]->to && (position->x / 150 + 8 * (position->y / 150)) == Moves[i]->from) {
+									if ((to.x / 150 + 8 * (to.y / 150)) == Moves[i].to && (position->x / 150 + 8 * (position->y / 150)) == Moves[i].from) {
 										yourturn = false;
-										make_move(*Moves[i], colour);
+										make_move(Moves[i], colour);
 										for (int j = Moves.size() - 1; j > -1; j--) {
-											delete Moves[j];
 											Moves.pop_back();
 										}
 										break;
@@ -115,7 +115,7 @@ int main(){
 		else {
 			sf::Event events;
 			window.pollEvent(events);
-			make_move(*ai(5, colour),colour);
+			make_move(*ai(7, colour),colour);
 		}
 	}
 }

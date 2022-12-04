@@ -27,47 +27,47 @@ Move::Move(uint8_t aFrom, uint8_t aTo, uint8_t aSpecial, uint8_t aFromtype){
 }
 
 //White pawn move generator using bitwise operations on bit boards
-void wPmoves(int position, std::vector<Move*>& Moves) {
+void wPmoves(int position, std::vector<Move>& Moves) {
 	if (!((board.Occupancy >> (position - 8)) & 1)) {
 		if ((!((board.Occupancy >> (position - 16)) & 1))&& (position / 8) == 6) {
-			Moves.vector::emplace_back(new Move(position, position - 16,0, 0));
+			Moves.vector::emplace_back(Move(position, position - 16,0, 0));
 		}
 		if (((position - 8) / 8) == 0) {
-			Moves.vector::emplace_back(new Move(position, position - 8, 2,0));
+			Moves.vector::emplace_back(Move(position, position - 8, 2,0));
 		}
 		else {
-			Moves.vector::emplace_back(new Move(position, position - 8, 0, 0));
+			Moves.vector::emplace_back(Move(position, position - 8, 0, 0));
 		}
 	}
 	if (position % 8 != 0 && (board.colours[1] >> (position - 9) & 1)) {
 		if (((position - 8) / 8) == 0) {
-			Moves.vector::emplace_back(new Move(position, position - 9, 3, 0));
+			Moves.vector::emplace_back(Move(position, position - 9, 3, 0));
 		}
 		else {
-			Moves.vector::emplace_back(new Move(position, position - 9, 1, 0));
+			Moves.vector::emplace_back(Move(position, position - 9, 1, 0));
 		}
-		Moves.vector::emplace_back(new Move(position, position - 9,1,0));
+		Moves.vector::emplace_back(Move(position, position - 9,1,0));
 	}
 	if (((position + 1) % 8 != 0) && (board.colours[1] >> (position - 7) & 1)) {
 		if (((position - 8) / 8) == 0) {
-			Moves.vector::emplace_back(new Move(position, position - 7, 3, 0));
+			Moves.vector::emplace_back(Move(position, position - 7, 3, 0));
 		}
 		else {
-			Moves.vector::emplace_back(new Move(position, position - 7, 1, 0));
+			Moves.vector::emplace_back(Move(position, position - 7, 1, 0));
 		}
 	}
 }
 
-void TableMoves(uint64_t a,int colour, std::vector<Move*>& Moves,int position,int type) {
+void TableMoves(uint64_t a,int colour, std::vector<Move>& Moves,int position,int type) {
 	uint8_t *t = static_cast<uint8_t*>(static_cast<void*>(&a));
 	for (uint8_t i = 0; i < 8; i++) {
 		if (t[i]) {
 			for (uint8_t j = 0; j < 8; j++) {
 				if ((t[i]>>j&1) and (1&~((board.Occupancy>> (i * 8 + j))))) {
-					Moves.vector::emplace_back(new Move(position,i * 8 + j,0,type));
+					Moves.vector::emplace_back(Move(position,i * 8 + j,0,type));
 				}
 				else if ((t[i] >> j & 1) and ((board.colours[!colour] >> (i * 8 + j) & 1))) {
-					Moves.vector::emplace_back(new Move(position, i * 8 + j, 1,type));
+					Moves.vector::emplace_back(Move(position, i * 8 + j, 1,type));
 				}
 			}
 		}
@@ -75,28 +75,28 @@ void TableMoves(uint64_t a,int colour, std::vector<Move*>& Moves,int position,in
 }
 
 //Black pawn move generator using bitwise operations on bit boards
-void bPmoves(int position, std::vector<Move*>& Moves) {
+void bPmoves(int position, std::vector<Move>& Moves) {
 	if (!((board.Occupancy >> (position + 8))&1)) {
 		if ((!((board.Occupancy >> (position + 16)) & 1)) && ((position / 8 )== 1)) {
-			Moves.vector::emplace_back(new Move(position, position + 16,0,0));
+			Moves.vector::emplace_back(Move(position, position + 16,0,0));
 		}
 		if (((position + 8) / 8) == 7) {
-			Moves.vector::emplace_back(new Move(position, position + 8, 2,0));
+			Moves.vector::emplace_back(Move(position, position + 8, 2,0));
 		}
 		else {
-			Moves.vector::emplace_back(new Move(position, position + 8, 0,0));
+			Moves.vector::emplace_back(Move(position, position + 8, 0,0));
 		}
 	}
 	if ((position % 8 != 0) && ((board.colours[0] >> (position + 7)) & 1)) {
-		Moves.vector::emplace_back(new Move(position, position + 7,1,0));
+		Moves.vector::emplace_back(Move(position, position + 7,1,0));
 	}
 	if (((position+1) % 8 != 0) && (board.colours[0] >> (position + 9) & 1)) {
-		Moves.vector::emplace_back(new Move(position, position + 9,1,0));
+		Moves.vector::emplace_back(Move(position, position + 9,1,0));
 	}
 }
 
 //Function that generates all current legal moves for the current player
-void GenerateMoves(int colour, std::vector<Move*>& Moves) {
+void GenerateMoves(int colour, std::vector<Move>& Moves) {
 	//By reserving 50 moves the need for rezising the vector is reduced due to the amount of moves rarley exceeding 50 thereby greatly improving performance
 	Moves.reserve(50);
 
