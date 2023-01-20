@@ -18,7 +18,7 @@ struct Move{
 	uint8_t to;
 	uint8_t fromtype;
 	//int that stores wether the move is special
-	//1=capture,10=promotion,100=Qcastel,1000=Kcastel,10000=en passant
+	//1=capture,10=promotion,100=Scastel,1000=Lcastel,10000=en passant 100000=removes Scastel 1000000=removes Lcastle
 	uint8_t special;
 	uint8_t totype;
 	Move(uint8_t aFrom, uint8_t aTo, uint8_t aSpecial, uint8_t aFromtype);
@@ -29,6 +29,8 @@ inline void wPmoves(int coordinate, std::vector<Move>& Moves);
 inline void bPmoves(int coordinate, std::vector<Move>& Moves);
 
 void TableMoves(uint64_t a,int colour, std::vector<Move>& Moves,int position,int type);
+
+void Castling(uint64_t a, int colour, std::vector<Move>& Moves);
 
 void GenerateMoves(int colour, std::vector<Move>& Moves);
 

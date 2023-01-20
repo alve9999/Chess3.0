@@ -44,13 +44,11 @@ int main(){
     window.display();
 	std::vector<Move> Moves;
 
+
 	//your turn loop
 	bool colour = 1;
-	bool your_colour = 0;
+	bool your_colour = 1;
 	while (2) {
-		chess_pattern(window, White_square, Black_square);
-		draw_board(window);
-		window.display();
 		int movedpiece;
 		if (colour) {
 			colour = 0;
@@ -59,12 +57,14 @@ int main(){
 			colour = 1;
 		}
 		sf::Vector2i position;
-		GenerateMoves(colour, Moves);
+		
 
+		GenerateMoves(colour, Moves);
+		cout << Moves.size()<<std::endl;
 		chess_pattern(window, White_square, Black_square);
 		draw_board(window);
 		window.display();
-		if (0) {
+		if (your_colour==colour) {
 			bool yourturn = 1;
 			while (yourturn) {
 				bool clicked = 0;
@@ -115,7 +115,17 @@ int main(){
 		else {
 			sf::Event events;
 			window.pollEvent(events);
-			make_move(*ai(7, colour),colour);
+			system("CLS");
+			make_move(*ai(3, colour, window, White_square, Black_square),colour);
+			std::cout <<"o:" << popCount64bit(board.Occupancy) << std::endl;
+			std::cout <<"p:" << popCount64bit(board.Types[0]) << std::endl;
+			std::cout <<"n:" << popCount64bit(board.Types[1]) << std::endl;
+			std::cout <<"b:" << popCount64bit(board.Types[2]) << std::endl;
+			std::cout <<"r:" << popCount64bit(board.Types[3]) << std::endl;
+			std::cout <<"q:" << popCount64bit(board.Types[4]) << std::endl;
+			std::cout <<"k:" << popCount64bit(board.Types[5]) << std::endl;
+			std::cout <<"w:" << popCount64bit(board.colours[0]) << std::endl;
+			std::cout <<"b:" << popCount64bit(board.colours[1]) << std::endl;
 		}
 	}
 }
