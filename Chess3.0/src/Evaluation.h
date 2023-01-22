@@ -1,5 +1,6 @@
 #pragma once
 #include "Board.h"
+#include "Bit.h"
 #include <iostream>
 #define weight(x) (int8_t)(0.2*x)
 #define VALUE_WEIGHT 5
@@ -101,12 +102,16 @@ __forceinline int evaluate0() {
 	int score = 0;
 	unsigned long index = 0;
 	int c = 0;
-	uint64_t b = board.colours[1];
-	uint64_t w = board.colours[0];
-	while (w) {
-		_BitScanForward64(&index, w);
+	uint64_t opponent = board.colours[1];
+	uint64_t your = board.colours[0];
+	if (popCount64bit(board.Types[5]) == 1) {
+		_BitScanForward64(&index, board.Types[5]);
+		return ((board.colours[0] >> index) & 1) ? -INFINITY : INFINITY;
+	}
+	while (your) {
+		_BitScanForward64(&index, your);
 		c += index;
-		w = w >> index;
+		your = your >> index;
 		score += (((board.Types[0] >> c) & 1)) * (20 + (pawntable1[c]));
 
 		score += (((board.Types[1] >> c) & 1)) * (60 + (knightstable[c]));
@@ -118,14 +123,14 @@ __forceinline int evaluate0() {
 		score += (((board.Types[4] >> c) & 1)) * (180 + (queenstable[c]));
 
 		score += (((board.Types[5] >> c) & 1)) * (2000 + (kingstable1[c]));
-		w = w >> 1;
+		your = your >> 1;
 		c++;
 	}
 	c = 0;
-	while (b) {
-		_BitScanForward64(&index, b);
+	while (opponent) {
+		_BitScanForward64(&index, opponent);
 		c += index;
-		b = b >> index;
+		opponent = opponent >> index;
 		score -= (((board.Types[0] >> c) & 1)) * (20 + (pawntable1[c]));
 
 		score -= (((board.Types[1] >> c) & 1)) * (60 + (knightstable[c]));
@@ -138,7 +143,7 @@ __forceinline int evaluate0() {
 
 		score -= (((board.Types[5] >> c) & 1)) * (1000 + (kingstable1[c]));
 
-		b = b >> 1;
+		opponent = opponent >> 1;
 		c++;
 	}
 	return score;
@@ -147,12 +152,16 @@ __forceinline int evaluate1() {
 	int score = 0;
 	unsigned long index = 0;
 	int c = 0;
-	uint64_t w = board.colours[1];
-	uint64_t b = board.colours[0];
-	while (w) {
-		_BitScanForward64(&index,w);
+	uint64_t opponent = board.colours[0];
+	uint64_t your = board.colours[1];
+	if(popCount64bit(board.Types[5])==1){
+		_BitScanForward64(&index, board.Types[5]);
+		return ((board.colours[1] >> index) & 1) ? -INFINITY : INFINITY;
+	}
+	while (your) {
+		_BitScanForward64(&index, your);
 		c += index;
-		w = w >> index;
+		your = your >> index;
 		score += (((board.Types[0] >> c) & 1)) * (20 + (pawntable1[c]));
 
 		score += (((board.Types[1] >> c) & 1)) * (60 + (knightstable[c]));
@@ -163,15 +172,15 @@ __forceinline int evaluate1() {
 
 		score += (((board.Types[4] >> c) & 1)) * (180 + (queenstable[c]));
 
-		score += (((board.Types[5] >> c) & 1)) * (2000 + (kingstable1[c]));
-		w = w >> 1;
+		score += (((board.Types[5] >> c) & 1)) * ((kingstable1[c]));
+		your = your >> 1;
 		c++;
 	}
 	c = 0;
-	while (b) {
-		_BitScanForward64(&index, b);
+	while (opponent) {
+		_BitScanForward64(&index, opponent);
 		c += index;
-		b = b >> index;
+		opponent = opponent >> index;
 		score -= (((board.Types[0] >> c) & 1)) * (20 + (pawntable1[c]));
 
 		score -= (((board.Types[1] >> c) & 1)) * (60 + (knightstable[c]));
@@ -182,9 +191,9 @@ __forceinline int evaluate1() {
 
 		score -= (((board.Types[4] >> c) & 1)) * (180 + (queenstable[c]));
 
-		score -= (((board.Types[5] >> c) & 1)) * (1000 + (kingstable1[c]));
+		score -= (((board.Types[5] >> c) & 1)) * ((kingstable1[c]));
 
-		b = b >> 1;
+		opponent = opponent >> 1;
 		c++;
 	}
 	return score;
