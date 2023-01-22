@@ -122,7 +122,7 @@ __forceinline int evaluate0() {
 
 		score += (((board.Types[4] >> c) & 1)) * (180 + (queenstable[c]));
 
-		score += (((board.Types[5] >> c) & 1)) * (2000 + (kingstable1[c]));
+		score += (((board.Types[5] >> c) & 1)) * ((kingstable1[c]));
 		your = your >> 1;
 		c++;
 	}
@@ -141,7 +141,7 @@ __forceinline int evaluate0() {
 
 		score -= (((board.Types[4] >> c) & 1)) * (180 + (queenstable[c]));
 
-		score -= (((board.Types[5] >> c) & 1)) * (1000 + (kingstable1[c]));
+		score -= (((board.Types[5] >> c) & 1)) * ((kingstable1[c]));
 
 		opponent = opponent >> 1;
 		c++;
