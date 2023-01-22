@@ -10,7 +10,7 @@ int MinMax(int depth,bool colour,bool first,int alpha,int beta, uint64_t key) {
 	tc++;
 	int val = 0;
 	int hashf = 1;
-	if ((val = TT.probe_hash(depth, alpha, beta, key))!=UNKNOWN) {
+	if ((val = TT.probe_hash(depth, alpha, beta, key))!=UNKNOWN){
 		sc++;
 		return val;
 	}

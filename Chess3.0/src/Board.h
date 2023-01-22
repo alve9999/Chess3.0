@@ -22,11 +22,6 @@ public:
 	//variable that holds the colour of the current player
 	int Currentcolour = 1;
 
-
-	bool GetPosition(int x, int y);
-	bool GetBlack(int x, int y);
-	bool GetWhite(int x, int y);
-	void EndTurn();
 };
 
 extern Board board;

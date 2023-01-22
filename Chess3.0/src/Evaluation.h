@@ -1,7 +1,10 @@
 #pragma once
 #include "Board.h"
 #include <iostream>
-#define weight(x) (int8_t)(0.1*x)
+#define weight(x) (int8_t)(0.2*x)
+#define VALUE_WEIGHT 5
+#include <intrin.h>
+#pragma intrinsic(_BitScanForward64)
 
 const int8_t pawntable0[64] = { weight(0) , weight(0) , weight(0) , weight(0) , weight(0) , weight(0) , weight(0) , weight(0) , weight(
 50) , weight(50) , weight(50) , weight(50) , weight(50) , weight(50) , weight(50) , weight(50) , weight(
@@ -92,57 +95,97 @@ const int8_t kingstable1[64] = {weight(-30) , weight( -40) , weight( -40) , weig
 20) , weight( 20) , weight( 0) , weight( 0) , weight( 0) , weight( 0) , weight( 20) , weight( 20) , weight(
  20) , weight( 30) , weight( 10) , weight( 0) , weight( 0) , weight( 10) , weight( 30) , weight( 20)};
 
+
+
 __forceinline int evaluate0() {
 	int score = 0;
-	for (int i = 0; i < 64; i++) {
-		if ((board.Occupancy >> i) & 1) {
-			int c0 = (((board.colours[0] >> i) & 1));
-			int c1 = ~c0;
-			score += (c0 & ((board.Types[0] >> i) & 1)) * (20 + (pawntable0[i]));
-			score -= (c1 & ((board.Types[0] >> i) & 1)) * (20 + (pawntable1[i]));
+	unsigned long index = 0;
+	int c = 0;
+	uint64_t b = board.colours[1];
+	uint64_t w = board.colours[0];
+	while (w) {
+		_BitScanForward64(&index, w);
+		c += index;
+		w = w >> index;
+		score += (((board.Types[0] >> c) & 1)) * (20 + (pawntable1[c]));
 
-			score += (c0 & ((board.Types[1] >> i) & 1)) * (60 + (knightstable[i]));
-			score -= (c1 & ((board.Types[1] >> i) & 1)) * (60 + (knightstable[i]));
+		score += (((board.Types[1] >> c) & 1)) * (60 + (knightstable[c]));
 
-			score += (c0 & ((board.Types[2] >> i) & 1)) * (60 + (bishopstable0[i]));
-			score -= (c1 & ((board.Types[2] >> i) & 1)) * (60 + (bishopstable1[i]));
+		score += (((board.Types[2] >> c) & 1)) * (60 + (bishopstable1[c]));
 
-			score += (c0 & ((board.Types[3] >> i) & 1)) * (100 + (rookstable0[i]));
-			score -= (c1 & ((board.Types[3] >> i) & 1)) * (100 + (rookstable1[i]));
+		score += (((board.Types[3] >> c) & 1)) * (100 + (rookstable1[c]));
 
-			score += (c0 & ((board.Types[4] >> i) & 1)) * (180 + (queenstable[i]));
-			score -= (c1 & ((board.Types[4] >> i) & 1)) * (180 + (queenstable[i]));
+		score += (((board.Types[4] >> c) & 1)) * (180 + (queenstable[c]));
 
-			score += (c0 & ((board.Types[5] >> i) & 1)) * (1000 + (kingstable0[i]));
-			score -= (c1 & ((board.Types[5] >> i) & 1)) * (1000 + (kingstable1[i]));
-		}
+		score += (((board.Types[5] >> c) & 1)) * (2000 + (kingstable1[c]));
+		w = w >> 1;
+		c++;
+	}
+	c = 0;
+	while (b) {
+		_BitScanForward64(&index, b);
+		c += index;
+		b = b >> index;
+		score -= (((board.Types[0] >> c) & 1)) * (20 + (pawntable1[c]));
+
+		score -= (((board.Types[1] >> c) & 1)) * (60 + (knightstable[c]));
+
+		score -= (((board.Types[2] >> c) & 1)) * (60 + (bishopstable1[c]));
+
+		score -= (((board.Types[3] >> c) & 1)) * (100 + (rookstable1[c]));
+
+		score -= (((board.Types[4] >> c) & 1)) * (180 + (queenstable[c]));
+
+		score -= (((board.Types[5] >> c) & 1)) * (1000 + (kingstable1[c]));
+
+		b = b >> 1;
+		c++;
 	}
 	return score;
 }
 __forceinline int evaluate1() {
 	int score = 0;
-	for (int i = 0; i < 64; i++) {
-		if ((board.Occupancy >> i) & 1) {
-			int c0 = (((board.colours[1] >> i) & 1));
-			int c1 = ~c0;
-			score += (c0 & ((board.Types[0] >> i) & 1)) * (20 + (pawntable1[i]));
-			score -= (c1 & ((board.Types[0] >> i) & 1) * (20 + (pawntable0[i])));
+	unsigned long index = 0;
+	int c = 0;
+	uint64_t w = board.colours[1];
+	uint64_t b = board.colours[0];
+	while (w) {
+		_BitScanForward64(&index,w);
+		c += index;
+		w = w >> index;
+		score += (((board.Types[0] >> c) & 1)) * (20 + (pawntable1[c]));
 
-			score += (c0 & ((board.Types[1] >> i) & 1)) * (60 + (knightstable[i]));
-			score -= (c1 & ((board.Types[1] >> i) & 1)) * (60 + (knightstable[i]));
+		score += (((board.Types[1] >> c) & 1)) * (60 + (knightstable[c]));
 
-			score += (c0 & ((board.Types[2] >> i) & 1)) * (60 + (bishopstable1[i]));
-			score -= (c1 & ((board.Types[2] >> i) & 1)) * (60 + (bishopstable0[i]));
+		score += (((board.Types[2] >> c) & 1)) * (60 + (bishopstable1[c]));
 
-			score += (c0 & ((board.Types[3] >> i) & 1)) * (100 + (rookstable1[i]));
-			score -= (c1 & ((board.Types[3] >> i) & 1)) * (100 + (rookstable0[i]));
+		score += (((board.Types[3] >> c) & 1)) * (100 + (rookstable1[c]));
 
-			score += (c0 & ((board.Types[4] >> i) & 1)) * (180 + (queenstable[i]));
-			score -= (c1 & ((board.Types[4] >> i) & 1)) * (180 + (queenstable[i]));
+		score += (((board.Types[4] >> c) & 1)) * (180 + (queenstable[c]));
 
-			score += (c0 & ((board.Types[5] >> i) & 1)) * (1000 + (kingstable1[i]));
-			score -= (c1 & ((board.Types[5] >> i) & 1)) * (1000 + (kingstable0[i]));
-		}
+		score += (((board.Types[5] >> c) & 1)) * (2000 + (kingstable1[c]));
+		w = w >> 1;
+		c++;
+	}
+	c = 0;
+	while (b) {
+		_BitScanForward64(&index, b);
+		c += index;
+		b = b >> index;
+		score -= (((board.Types[0] >> c) & 1)) * (20 + (pawntable1[c]));
+
+		score -= (((board.Types[1] >> c) & 1)) * (60 + (knightstable[c]));
+
+		score -= (((board.Types[2] >> c) & 1)) * (60 + (bishopstable1[c]));
+
+		score -= (((board.Types[3] >> c) & 1)) * (100 + (rookstable1[c]));
+
+		score -= (((board.Types[4] >> c) & 1)) * (180 + (queenstable[c]));
+
+		score -= (((board.Types[5] >> c) & 1)) * (1000 + (kingstable1[c]));
+
+		b = b >> 1;
+		c++;
 	}
 	return score;
 }
