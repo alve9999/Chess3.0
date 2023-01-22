@@ -4,13 +4,13 @@
 #include "src/Moves.h"
 #include "src/Magic.h"
 #include "src/graphics.h"
-#include "src/bit.h"
+#include "src/Bit.h"
 #include "src/Ai.h"
 #include <iostream>
 #include <chrono>
 #include <thread>
 #include "src/Evaluation.h"
-
+#include "src/Hash.h"
 using namespace std;
 
 void print_bitboard(uint64_t bitboard) {
@@ -30,6 +30,9 @@ void print_bitboard(uint64_t bitboard) {
 }
 
 int main(){
+	//hash setup
+	srand(0);
+	gen_random(random_key);
 	//initialisation
     sf::RenderWindow window(sf::VideoMode(150 * 8, 150 * 8), "Chess3.0");
     sf::RectangleShape Black_square(sf::Vector2f(150, 150));
@@ -47,8 +50,8 @@ int main(){
 
 	//your turn loop
 	bool colour = 1;
-	bool your_colour = 1;
-	while (2) {
+	bool your_colour = 0;
+	while (1) {
 		int movedpiece;
 		if (colour) {
 			colour = 0;
@@ -60,7 +63,6 @@ int main(){
 		
 
 		GenerateMoves(colour, Moves);
-		cout << Moves.size()<<std::endl;
 		chess_pattern(window, White_square, Black_square);
 		draw_board(window);
 		window.display();
@@ -116,7 +118,7 @@ int main(){
 			sf::Event events;
 			window.pollEvent(events);
 			system("CLS");
-			make_move(*ai(3, colour, window, White_square, Black_square),colour);
+			make_move(*ai(7,colour),colour);
 			std::cout <<"o:" << popCount64bit(board.Occupancy) << std::endl;
 			std::cout <<"p:" << popCount64bit(board.Types[0]) << std::endl;
 			std::cout <<"n:" << popCount64bit(board.Types[1]) << std::endl;

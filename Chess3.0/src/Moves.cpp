@@ -24,8 +24,18 @@ Move::Move(uint8_t aFrom, uint8_t aTo, uint8_t aSpecial, uint8_t aFromtype){
 	to = aTo;
 	special = aSpecial;
 	fromtype = aFromtype;
+	totype = 8;
 }
 
+std::ostream& operator<<(std::ostream& os, const Move& obj)
+{
+	os << "From:" << (int)obj.from << std::endl << "FromType:" << (int)obj.fromtype << std::endl << "To:" << (int)obj.to << std::endl;
+	if (obj.totype!=8) {
+		os << "ToType:" << (int)obj.from << std::endl;
+	}
+	os << "Special:" << (int)obj.special << std::endl;
+	return os;
+}
 
 void TableMoves(uint64_t a,int colour, std::vector<Move>& Moves,int position,int type) {
 	uint8_t *t = static_cast<uint8_t*>(static_cast<void*>(&a));
@@ -36,7 +46,7 @@ void TableMoves(uint64_t a,int colour, std::vector<Move>& Moves,int position,int
 					Moves.vector::emplace_back(Move(position,i * 8 + j, 0 ,type));
 				}
 				else if ((t[i] >> j & 1) and ((board.colours[!colour] >> (i * 8 + j) & 1))) {
-					Moves.vector::emplace_back(Move(position, i * 8 + j, 1,type));
+					Moves.vector::emplace_back(Move(position, i * 8 + j, 16,type));
 				}
 			}
 		}
@@ -59,18 +69,18 @@ void wPmoves(int position, std::vector<Move>& Moves) {
 	}
 	if (((position - 1) % 8 != 0) != 0 && (board.colours[1] >> (position - 9) & 1)) {
 		if (((position - 8) / 8) == 0) {
-			Moves.vector::emplace_back(Move(position, position - 9, 3, 0));
+			Moves.vector::emplace_back(Move(position, position - 9, 18, 0));
 		}
 		else {
-			Moves.vector::emplace_back(Move(position, position - 9, 1, 0));
+			Moves.vector::emplace_back(Move(position, position - 9, 16, 0));
 		}
 	}
 	if (((position + 1) % 8 != 0) && (board.colours[1] >> (position - 7) & 1)) {
 		if (((position - 8) / 8) == 0) {
-			Moves.vector::emplace_back(Move(position, position - 7, 3, 0));
+			Moves.vector::emplace_back(Move(position, position - 7, 18, 0));
 		}
 		else {
-			Moves.vector::emplace_back(Move(position, position - 7, 1, 0));
+			Moves.vector::emplace_back(Move(position, position - 7, 16, 0));
 		}
 	}
 }
@@ -89,18 +99,18 @@ void bPmoves(int position, std::vector<Move>& Moves) {
 	}
 	if (((position + 1) % 8 != 0) && (board.colours[0] >> (position + 9) & 1)) {
 		if (((position + 8) / 8) == 7) {
-			Moves.vector::emplace_back(Move(position, position + 9, 3, 0));
+			Moves.vector::emplace_back(Move(position, position + 9, 18, 0));
 		}
 		else {
-			Moves.vector::emplace_back(Move(position, position + 9, 1, 0));
+			Moves.vector::emplace_back(Move(position, position + 9, 16, 0));
 		}
 	}
 	if (((position - 1) % 8 != 0) && (board.colours[0] >> (position + 7) & 1)) {
 		if (((position + 8) / 8) == 7) {
-			Moves.vector::emplace_back(Move(position, position + 7, 3, 0));
+			Moves.vector::emplace_back(Move(position, position + 7, 18, 0));
 		}
 		else {
-			Moves.vector::emplace_back(Move(position, position + 7, 1, 0));
+			Moves.vector::emplace_back(Move(position, position + 7, 16, 0));
 		}
 	}
 }
@@ -155,12 +165,13 @@ void GenerateMoves(int colour, std::vector<Move>& Moves) {
 			}
 		}
 	}
+	std::sort(Moves.begin(), Moves.end(), [](Move a, Move b){return a.special > b.special;});
 }
 
 Move make_move(Move& move,bool colour) {
 	//std::cout << (int)move.from << " " << (int)move.to << " " << (int)move.fromtype << " " << (int)move.special << std::endl;
 	//capture
-	if (move.special & 1ULL) {
+	if (move.special & 16ULL) {
 		//clears to square
 		board.colours[!colour] &= ~(1ULL << move.to);
 		board.Occupancy &= ~(1ULL << move.to);
@@ -245,7 +256,7 @@ void unmake_move(Move& move, bool colour) {
 		//clears promoted to square
 		board.Types[4] &= ~(1ULL << move.to);
 	}
-	if (move.special & 1ULL) {
+	if (move.special & 16ULL) {
 		//sets to square
 		board.Types[move.totype] |= 1ULL << move.to;
 		board.colours[!colour] |= 1ULL << move.to;

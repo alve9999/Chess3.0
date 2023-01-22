@@ -39,7 +39,7 @@
     <ClCompile Include="src\Evaluation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hash.cpp">
+    <ClCompile Include="src\Hash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,7 +65,7 @@
     <ClInclude Include="src\Evaluation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Hash.h">
+    <ClInclude Include="src\Hash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

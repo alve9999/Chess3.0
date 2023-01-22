@@ -1,7 +1,7 @@
 #pragma once
 #include "Board.h"
 #include <iostream>
-#define weight(x) (int8_t)(0.2*x)
+#define weight(x) (int8_t)(0.1*x)
 
 const int8_t pawntable0[64] = { weight(0) , weight(0) , weight(0) , weight(0) , weight(0) , weight(0) , weight(0) , weight(0) , weight(
 50) , weight(50) , weight(50) , weight(50) , weight(50) , weight(50) , weight(50) , weight(50) , weight(

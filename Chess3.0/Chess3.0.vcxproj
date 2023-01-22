@@ -173,22 +173,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Chess3.0.cpp" />
-    <ClCompile Include="Hash.cpp" />
     <ClCompile Include="src\Ai.cpp" />
     <ClCompile Include="src\Board.cpp" />
     <ClCompile Include="src\Graphics.cpp" />
+    <ClCompile Include="src\Hash.cpp" />
     <ClCompile Include="src\Magic.cpp" />
     <ClCompile Include="src\Moves.cpp" />
     <ClCompile Include="src\Bit.cpp" />
     <ClCompile Include="src\Evaluation.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Hash.h" />
     <ClInclude Include="src\Ai.h" />
     <ClInclude Include="src\Board.h" />
     <ClInclude Include="src\Bit.h" />
     <ClInclude Include="src\Graphics.h" />
     <ClInclude Include="src\Evaluation.h" />
+    <ClInclude Include="src\Hash.h" />
     <ClInclude Include="src\Magic.h" />
     <ClInclude Include="src\Moves.h" />
   </ItemGroup>

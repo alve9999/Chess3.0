@@ -1,42 +1,54 @@
 #include "Ai.h"
+#include "Hash.h"
 Move* best_move;
+#define UNKNOWN 989
 #include <chrono>
 #include <thread>
-int MinMax(int depth,bool colour,bool first,int alpha,int beta, sf::RenderWindow& window, sf::RectangleShape White_square, sf::RectangleShape Black_square) {
+int sc = 0;
+int tc = 0;
+int MinMax(int depth,bool colour,bool first,int alpha,int beta, uint64_t key) {
+	tc++;
+	int val = 0;
+	int hashf = 1;
+	if ((val = TT.probe_hash(depth, alpha, beta, key))!=UNKNOWN) {
+		sc++;
+		return val;
+	}
 	if (depth == 0) {
+		val = evaluate(colour);
+		TT.store(depth,val,0,key);
 		return evaluate(colour);
 	}
 	else {
 		std::vector<Move> local_moves;
 		GenerateMoves(colour, local_moves);
-		int maximum = -100000;
 		for (int i = 0; i < local_moves.size(); i++) {
 			Move made_move = make_move(local_moves[i], colour);
-			/*std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-			chess_pattern(window, White_square, Black_square);
-			draw_board(window);
-			window.display();*/
-			int eval = -MinMax(depth - 1, !colour, false,-beta,-alpha, window, White_square, Black_square);
+			uint64_t new_key = update_hash(key,local_moves[i],colour);
+			val = -MinMax(depth - 1, !colour, false,-beta,-alpha,new_key);
 			unmake_move(made_move, colour);
-			if (maximum<eval) {
-				maximum = eval;
-				if (first and i==0) {
-					best_move = new Move(local_moves[i]);
-				}
-				else if (first) {
-					best_move = new Move(local_moves[i]);
-				}
+			if (beta <= val) {
+				TT.store(depth, val, 2, key);
+				return beta;
 			}
-			alpha = std::max(alpha,maximum);
-			if (beta <= alpha) {
-				break;
+			if (val > alpha) {
+				hashf = 0;
+				alpha = val;
+				if (first) {
+					best_move = new Move(local_moves[i]);
+				}
 			}
 		}
-		return maximum;
+		TT.store(depth, val, hashf, key);
+		return alpha;
 	}
 }
 
-Move* ai(int depth,bool colour, sf::RenderWindow& window, sf::RectangleShape White_square, sf::RectangleShape Black_square) {
-	MinMax(depth, colour, true,-100000,100000, window, White_square, Black_square);
+Move* ai(int depth,bool colour) {
+	MinMax(depth, colour, true,-100000,100000, create_hash(colour));
+	std::cout <<"skiped:"<< sc<< "total:"<<tc<<std::endl;
+	std::cout << "percentage:" << (double)sc / (double)tc<<std::endl;
+	sc = 0;
+	tc = 0;
 	return best_move;
 }
