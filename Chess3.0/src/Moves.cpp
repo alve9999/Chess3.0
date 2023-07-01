@@ -1,6 +1,5 @@
 #include "Moves.h"
 
-
 void gennTable() {
 	const int directions[2][8] = { {6,10,-6,-10,17,15,-17,-15 }, { 1,-1, -7, -8, -9, 7, 8, 9 }};
 	const int tiles[2][8] = { {1,1,-1,-1,2,2,-2,-2},{ 0,0,-1,-1,-1,1,1,1 } };
@@ -31,7 +30,7 @@ std::ostream& operator<<(std::ostream& os, const Move& obj)
 {
 	os << "From:" << (int)obj.from << std::endl << "FromType:" << (int)obj.fromtype << std::endl << "To:" << (int)obj.to << std::endl;
 	if (obj.totype!=8) {
-		os << "ToType:" << (int)obj.from << std::endl;
+		os << "ToType:" << (int)obj.totype << std::endl;
 	}
 	os << "Special:" << (int)obj.special << std::endl;
 	return os;
@@ -67,7 +66,7 @@ void wPmoves(int position, std::vector<Move>& Moves) {
 			Moves.vector::emplace_back(Move(position, position - 8, 0, 0));
 		}
 	}
-	if (((position - 1) % 8 != 0) != 0 && (board.colours[1] >> (position - 9) & 1)) {
+	if (((position/8 - (position-9)/8)==1) && (board.colours[1] >> (position - 9) & 1)) {
 		if (((position - 8) / 8) == 0) {
 			Moves.vector::emplace_back(Move(position, position - 9, 18, 0));
 		}
@@ -75,7 +74,7 @@ void wPmoves(int position, std::vector<Move>& Moves) {
 			Moves.vector::emplace_back(Move(position, position - 9, 16, 0));
 		}
 	}
-	if (((position + 1) % 8 != 0) && (board.colours[1] >> (position - 7) & 1)) {
+	if (((position/8 - (position - 7)/8) == 1) && (board.colours[1] >> (position - 7) & 1)) {
 		if (((position - 8) / 8) == 0) {
 			Moves.vector::emplace_back(Move(position, position - 7, 18, 0));
 		}
@@ -97,7 +96,7 @@ void bPmoves(int position, std::vector<Move>& Moves) {
 			Moves.vector::emplace_back(Move(position, position + 8, 0, 0));
 		}
 	}
-	if (((position + 1) % 8 != 0) && (board.colours[0] >> (position + 9) & 1)) {
+	if (((position/8 - (position + 9)/8) == -1) && (board.colours[0] >> (position + 9) & 1)) {
 		if (((position + 8) / 8) == 7) {
 			Moves.vector::emplace_back(Move(position, position + 9, 18, 0));
 		}
@@ -105,7 +104,7 @@ void bPmoves(int position, std::vector<Move>& Moves) {
 			Moves.vector::emplace_back(Move(position, position + 9, 16, 0));
 		}
 	}
-	if (((position - 1) % 8 != 0) && (board.colours[0] >> (position + 7) & 1)) {
+	if (((position/8 - (position + 7)/8) == -1) && (board.colours[0] >> (position + 7) & 1)) {
 		if (((position + 8) / 8) == 7) {
 			Moves.vector::emplace_back(Move(position, position + 7, 18, 0));
 		}
@@ -145,7 +144,7 @@ void GenerateMoves(int colour, std::vector<Move>& Moves) {
 
 	//Calls move calculation for each picece of the choosen colour
 	Castling(colour, Moves);
-	for (int i = 0; i < 64; i++) {
+	for(int i = 0; i < 64; i++) {
 		if ((board.colours[colour] >> i)&1) {
 			if ((board.Types[0] >> i) & colour)
 				bPmoves(i, Moves);
@@ -179,6 +178,9 @@ Move make_move(Move& move,bool colour) {
 			if ((board.Types[i] >> move.to) & 1) {
 				move.totype = i;
 				board.Types[i] &= ~(1ULL << move.to);
+				if (i == 5) {
+					board.won[colour] = 1;
+				}
 			}
 		}
 	}
@@ -194,8 +196,8 @@ Move make_move(Move& move,bool colour) {
 	//promote
 	if (move.special & 2ULL) {
 		//sets promoted to square
-		board.Types[4] |= 1ULL << move.to;
-		board.Types[0] &= ~(1ULL << move.to);
+		board.Types[q] |= 1ULL << move.to;
+		board.Types[p] &= ~(1ULL << move.to);
 	}
 	//short castle
 	if (move.special & 4) {
@@ -261,6 +263,9 @@ void unmake_move(Move& move, bool colour) {
 		board.Types[move.totype] |= 1ULL << move.to;
 		board.colours[!colour] |= 1ULL << move.to;
 		board.Occupancy |= 1ULL << move.to;
+		if (move.totype == 5) {
+			board.won[colour] = 0;
+		}
 	}
 	
 	//short castle

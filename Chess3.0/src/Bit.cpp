@@ -1,6 +1,7 @@
 #include <cstdint>
 #include "Bit.h"
 
+
 //simple function that reverses any 8 bit integer
 unsigned char reverse(unsigned char b) { 
 	b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;

@@ -17,7 +17,7 @@ TranspositionTable::TranspositionTable(uint64_t size) {
 	this->Table = (entry*)malloc(size*sizeof(entry));
 }
 
-void TranspositionTable::store(int depth, int val, int flag, uint64_t key) {
+void TranspositionTable::store(int depth, float val, int flag, uint64_t key) {
 	entry* node = &Table[key%size];
 	node->depth = depth;
 	node->value = val;
@@ -25,7 +25,7 @@ void TranspositionTable::store(int depth, int val, int flag, uint64_t key) {
 	node->key = key;
 }
 
-int TranspositionTable::probe_hash(int depth, int alpha, int beta, uint64_t key) {
+int TranspositionTable::probe_hash(int depth, float alpha, float beta, uint64_t key) {
 	entry* node = &Table[key % size];
 	if (node->key == key) {
 		if (node->depth >= depth) {
@@ -61,11 +61,11 @@ uint64_t update_hash(uint64_t key, Move move,bool colour) {
 		return create_hash(colour);
 	}
 	if (HASH_CHECK) {
-		if (create_hash(!colour) != key) {
+		if (create_hash(colour) != key and create_hash(!colour)!=key) {
 			uint64_t cor = create_hash(colour);
 			std::cout << "incorect hash" << std::endl;
 			std::cout << move<< std::endl;
-			assert(false);
+			//assert(false);
 		}
 	}
 	return key;

@@ -7,6 +7,6 @@
 #include <thread>
 #include <iostream>
 
-int MinMax(int depth, bool colour, bool first, int alpha, int beta,uint64_t hash);
+int MinMax(int depth, bool colour, bool first, float alpha, float beta,uint64_t hash,float score);
 
 Move* ai(int depth, bool colour);
