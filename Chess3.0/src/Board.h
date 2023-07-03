@@ -2,6 +2,7 @@
 #include <cstdint>
 //Static class that represents the main playing board
 #include <string>
+#include <stack>
 
 constexpr int p = 0;
 constexpr int n = 1;
@@ -12,6 +13,8 @@ constexpr int k = 5;
 
 constexpr int W = 0;
 constexpr int B = 1;
+
+void print_bitboard(uint64_t bitboard);
 
 struct Board {
 
@@ -25,9 +28,9 @@ struct Board {
 	uint64_t colours[2] = { 0,0 };
 	//variable that holds the colour of the current player
 	int Currentcolour = 1;
-	bool won[2] = { 0,0 };
 	int mgphase = 0;
 	int egphase = 0;
+	std::stack<uint8_t> enpassant;
 };
 
 

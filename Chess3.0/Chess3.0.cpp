@@ -15,13 +15,18 @@
 using namespace std;
 
 int main(){
+    board.enpassant.push(-1);
+    Magic_initialisation();
+    gennTable();
     load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+
+    print_piece_info();
 	srand(0);
 	gen_random(random_key);
 
-    Magic_initialisation();
-    gennTable();
+
     Ginit();
+    cout << perft(7, W) << endl;
     run_game();
 }
 

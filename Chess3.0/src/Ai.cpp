@@ -1,17 +1,13 @@
 #include "Ai.h"
 #include "Hash.h"
+#include <chrono>
+#include <thread>
 Move* best_move;
 #define UNKNOWN 989
 
 int sc = 0;
 int tc = 0;
 int MinMax(int depth,bool colour,bool first,float alpha,float beta, uint64_t key,float score) {
-	if (board.won[!colour]) {
-		return -INFINITY;
-	}
-	if (board.won[colour]) {
-		return INFINITY;
-	}
 	tc++;
 	float val = 0;
 	int hashf = 1;
@@ -28,6 +24,16 @@ int MinMax(int depth,bool colour,bool first,float alpha,float beta, uint64_t key
 	else {
 		std::vector<Move> local_moves;
 		GenerateMoves(colour, local_moves);
+		if (local_moves.size() == 0) {
+			unsigned long king;
+			_BitScanForward64(&king, board.colours[colour] & board.Types[k]);
+			if (is_attacked(king, colour)) {
+				return INFINITY;
+			}
+			else {
+				return 0;
+			}
+		}
 		for (int i = 0; i < local_moves.size(); i++) {
 			Move made_move = make_move(local_moves[i], colour);
 			uint64_t new_key = update_hash(key,local_moves[i],colour);

@@ -6,6 +6,22 @@
 #include "Bit.h"
 Board board;
 
+void print_bitboard(uint64_t bitboard) {
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if ((bitboard >> (i * 8 + j)) & 1)
+            {
+                std::cout << "1 ";
+            }
+            else
+            {
+                std::cout << "0 ";
+            }
+        }
+        std::cout << std::endl;
+    }
+}
+
 void load_fen(std::string fen) {
     size_t pos_start = 0;
     size_t pos_end;
@@ -39,7 +55,6 @@ void load_fen(std::string fen) {
     int pos = 0;
     for (std::string i : pieces) {
         for (char j : i){
-            std::cout << j<<" "<< pos << std::endl;
             if (isdigit(j)) {
                 pos += j - '0';
             }

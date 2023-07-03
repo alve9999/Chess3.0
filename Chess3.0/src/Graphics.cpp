@@ -22,7 +22,7 @@ sf::Texture ssprites[12];
 sf::Clock deltaClock;
 
 bool colour = 1;
-bool your_colour = 0;
+bool your_colour =0;
 int movedpiece;
 sf::Vector2i position;
 
@@ -110,7 +110,6 @@ sf::Vector2i move_piece(sf::RenderWindow& window, sf::RectangleShape White_squar
 }
 
 void print_piece_info() {
-	int movedpiece;
 	std::cout << "o:" << popCount64bit(board.Occupancy) << std::endl;
 	std::cout << "p:" << popCount64bit(board.Types[0]) << std::endl;
 	std::cout << "n:" << popCount64bit(board.Types[1]) << std::endl;
@@ -122,21 +121,7 @@ void print_piece_info() {
 	std::cout << "b:" << popCount64bit(board.colours[1]) << std::endl;
 }
 
-void print_bitboard(uint64_t bitboard) {
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8; j++) {
-			if ((bitboard >> (i * 8 + j)) & 1)
-			{
-				std::cout << "1 ";
-			}
-			else
-			{
-				std::cout << "0 ";
-			}
-		}
-		std::cout << std::endl;
-	}
-}
+
 
 
 void imgui_update() {
@@ -161,7 +146,7 @@ void turn() {
 	std::vector<Move> Moves;
 	GenerateMoves(colour, Moves);
 	update_graphics();
-	if (your_colour == colour) {
+	if (your_colour == colour || 1) {
 		bool yourturn = 1;
 		while (yourturn) {
 			bool clicked = 0;
@@ -210,7 +195,7 @@ void turn() {
 	else {
 		sf::Event events;
 		window.pollEvent(events);
-		make_move(*ai(7, colour), colour);
+		make_move(*ai(2, colour), colour);
 		update_graphics();
 	}
 
