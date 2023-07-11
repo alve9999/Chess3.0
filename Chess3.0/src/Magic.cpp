@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <iostream>
+#include <cmath>
 #include "Bit.h"
 #include "Magic.h"
 #include "Board.h"
@@ -152,7 +153,6 @@ uint64_t getRmagic(int square,uint64_t occ) {
     occ >>= (64ULL - RBn[square]);
     return Rindexs[square][occ];
 }
-
 uint64_t getBmagic(int square, uint64_t occ) {
     occ &= Bmasks[square];
     occ *= Bmagics[square];

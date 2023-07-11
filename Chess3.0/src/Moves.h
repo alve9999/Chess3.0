@@ -8,8 +8,12 @@
 #include "Bit.h"
 #include "Magic.h"
 
-__declspec(selectany) uint64_t nTable[64] = {};
-__declspec(selectany) uint64_t kTable[64] = {};
+#ifdef __linux__
+#define __declspec(x)
+#endif
+
+extern uint64_t nTable[64];
+extern uint64_t kTable[64];
 
 void gennTable();
 

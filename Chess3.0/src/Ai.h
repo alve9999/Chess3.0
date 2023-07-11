@@ -9,4 +9,4 @@
 
 int MinMax(int depth, bool colour, bool first, float alpha, float beta,uint64_t hash,float score);
 
-Move* ai(int depth, bool colour);
+Move* ai(int time, bool colour);

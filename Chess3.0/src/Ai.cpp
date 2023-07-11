@@ -2,12 +2,22 @@
 #include "Hash.h"
 #include <chrono>
 #include <thread>
+#include <cmath>
+#include <atomic>
 Move* best_move;
 #define UNKNOWN 989
+
+
+std::atomic<bool> timeIsUp(false);
+
+int global_depth;
 
 int sc = 0;
 int tc = 0;
 int MinMax(int depth,bool colour,bool first,float alpha,float beta, uint64_t key,float score) {
+        if(timeIsUp){
+	        return 0;
+        }
 	tc++;
 	float val = 0;
 	int hashf = 1;
@@ -24,6 +34,10 @@ int MinMax(int depth,bool colour,bool first,float alpha,float beta, uint64_t key
 	else {
 		std::vector<Move> local_moves;
 		GenerateMoves(colour, local_moves);
+		if(global_depth==depth && global_depth!=1){
+		        local_moves.erase(std::remove(local_moves.begin(), local_moves.end(), *best_move), local_moves.end());
+			local_moves.insert(local_moves.begin(), *best_move);
+		}
 		if (local_moves.size() == 0) {
 			unsigned long king;
 			_BitScanForward64(&king, board.colours[colour] & board.Types[k]);
@@ -40,6 +54,9 @@ int MinMax(int depth,bool colour,bool first,float alpha,float beta, uint64_t key
 			int new_score = update_eval(colour, score, local_moves[i]);
 			val = -MinMax(depth - 1, !colour, false,-beta,-alpha,new_key,-new_score);
 			unmake_move(made_move, colour);
+			if(timeIsUp){
+			        return 0;
+			}
 			if (beta <= val) {
 				TT.store(depth, val, 2, key);
 				return beta;
@@ -59,7 +76,24 @@ int MinMax(int depth,bool colour,bool first,float alpha,float beta, uint64_t key
 //piece phase value
 const int gamephaseInc[5] = { 0,1,1,2,4 };
 
-Move* ai(int depth,bool colour) {
+void iterative_deepening(bool colour){
+  float score = evaluate(colour);
+
+  global_depth = 1;
+  while(!timeIsUp){
+    MinMax(global_depth,colour,true,-100000,100000,create_hash(colour),score);
+    printf("finished depth %d\n",global_depth);
+    global_depth++;
+  }
+
+}
+
+void timer(std::chrono::milliseconds duration) {
+    std::this_thread::sleep_for(duration);
+    timeIsUp = true;
+}
+
+Move* ai(int time,bool colour) {
 	int phase = 0;
 	phase += popCount64bit(board.Types[1]) * gamephaseInc[1];
 	phase += popCount64bit(board.Types[2]) * gamephaseInc[2];
@@ -67,8 +101,15 @@ Move* ai(int depth,bool colour) {
 	phase += popCount64bit(board.Types[4]) * gamephaseInc[4];
 	board.mgphase = phase;
 	board.egphase = 24 - phase;
-	float score = evaluate(colour);
-	MinMax(depth, colour, true,-100000,100000, create_hash(colour),score);
+
+	std::thread searchThread(iterative_deepening, colour);
+	
+	std::chrono::milliseconds duration(time);
+	std::thread timerThread(timer, duration); 
+
+	searchThread.join();
+	timerThread.join();
+	timeIsUp = false;
 	std::cout <<"skiped:"<< sc<< "total:"<<tc<<std::endl;
 	std::cout << "percentage:" << (double)sc / (double)tc<<std::endl;
 	sc = 0;

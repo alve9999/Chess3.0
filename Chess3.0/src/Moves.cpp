@@ -4,6 +4,18 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
+#ifdef __linux__
+#define _BitScanForward64(var,num) (*var = __builtin_ffsll(num)-1)
+
+#else
+#include <intrin.h>
+#pragma intrinsic(_BitScanForward64)
+#endif
+
+uint64_t nTable[64] = {};
+uint64_t kTable[64] = {};
+
+
 void gennTable() {
 	const int directions[2][8] = { {6,10,-6,-10,17,15,-17,-15 }, { 1,-1, -7, -8, -9, 7, 8, 9 }};
 	const int tiles[2][8] = { {1,1,-1,-1,2,2,-2,-2},{ 0,0,-1,-1,-1,1,1,1 } };
@@ -81,7 +93,7 @@ uint64_t check_pin(bool colour, std::unordered_map<int, uint64_t>& map) {
 				for (int i = 1; i < 8; ++i) {
 					int cur_x2 = x + dir_x[dir] * i;
 					int cur_y2 = y + dir_y[dir] * i;
-					if (cur_x < 0 || cur_x >= 8 || cur_y < 0 || cur_y >= 8) {
+					if (cur_x2 < 0 || cur_x2 >= 8 || cur_y2 < 0 || cur_y2 >= 8) {
 						break;
 					}
 					SET(mask, POS(cur_x2, cur_y2));
@@ -93,7 +105,7 @@ uint64_t check_pin(bool colour, std::unordered_map<int, uint64_t>& map) {
 	}
 	return pinned;
 }
-
+#include <stdio.h>
 bool is_attacked(int pos, bool colour) {
 	if (colour == W) {
 		if (RANK(pos) != 0) {
@@ -499,9 +511,13 @@ Move make_move(Move& move,bool colour) {
 		board.colours[!colour] &= ~(1ULL << move.to);
 		board.Occupancy &= ~(1ULL << move.to);
 		for (int i = 0; i < 6; i++) {
+		  if(i==5){
+		    std::cout<<move<<std::endl;
+		  }
 			if ((board.Types[i] >> move.to) & 1) {
 				move.totype = i;
 				board.Types[i] &= ~(1ULL << move.to);
+				break;
 			}
 		}
 	}
@@ -693,7 +709,7 @@ Info perft(int depth, int colour) {
 	GenerateMoves(colour,moves);
 
 	for (size_t i = 0; i < moves.size(); i++) {
-
+	       
 		make_move(moves[i],colour);
 		Info ret;
 		ret = perft(depth - 1,!colour);

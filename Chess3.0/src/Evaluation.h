@@ -4,9 +4,20 @@
 #include "Moves.h"
 #include <assert.h>
 #include <iostream>
+#include <cmath>
 #define CHECK_EVAL DEBUG
+
+
+#ifdef __linux__
+#define _BitScanForward64(var,num) (*var = __builtin_ffsll(num)-1)
+#define __forceinline __attribute__((always_inline)) inline
+
+#else
 #include <intrin.h>
 #pragma intrinsic(_BitScanForward64)
+#endif
+
+
 
 
 const float mg_value[6] = { 82, 337, 365, 477, 1025,  0 };
