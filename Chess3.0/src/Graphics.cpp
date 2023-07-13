@@ -7,11 +7,12 @@
 #include "Moves.h"
 #include "Ai.h"
 
-sf::RectangleShape Black_square(sf::Vector2f(80, 80));
+sf::RectangleShape Black_square(sf::Vector2f(150, 150));
 
-sf::RectangleShape White_square(sf::Vector2f(80, 80));
+sf::RectangleShape White_square(sf::Vector2f(150, 150));
 
-sf::RenderWindow window(sf::VideoMode(80 * 8, 80 * 8), "Chess3.0");
+
+sf::RenderWindow window;
 
 std::vector<sf::Sprite> sprites;
 std::string sprite_names[] = { "bp.png", "bn.png", "bb.png", "br.png", "bq.png", "bk.png", "wp.png", "wn.png", "wb.png", "wr.png", "wq.png", "wk.png" };
@@ -27,10 +28,11 @@ sf::Vector2i position;
 std::vector<Move> Moves;
 
 void Ginit() {
+        window.create(sf::VideoMode(150 * 8, 150 * 8), "Chess3.0");
 	Black_square.setFillColor(sf::Color(106, 155, 65));
 	White_square.setFillColor(sf::Color(243, 243, 244));
 	for (int i = 0; i < 12; i++) {
-		ssprites[i].loadFromFile(sprite_names[i], sf::IntRect(0, 0, 80, 80));
+		ssprites[i].loadFromFile(sprite_names[i], sf::IntRect(0, 0, 150, 150));
 	}
 	for (int i = 0; i < 12; i++) {
 		sprites.vector::emplace_back(sf::Sprite());
@@ -44,7 +46,7 @@ void draw(sf::RenderWindow& window, int aposition, int colour, int type) {
 	sf::Sprite* sprite;
 	if (colour == 0) { sprite = &sprites[type + 6]; }
 	else { sprite = &sprites[type]; }
-	sprite->setPosition(x * 80, y * 80);
+	sprite->setPosition(x * 150, y * 150);
 	window.draw(*sprite);
 }
 
@@ -52,7 +54,7 @@ void draw2(sf::RenderWindow& window,  int x, int y, int colour, int type){
 	sf::Sprite* sprite;
 	if (colour == 0) { sprite = &sprites[type + 6]; }
 	else { sprite = &sprites[type]; }
-	sprite->setPosition(x - 0.5 * 80, y - 0.5 * 80);
+	sprite->setPosition(x - 0.5 * 150, y - 0.5 * 150);
 	window.draw(*sprite);
 }
 
@@ -74,11 +76,11 @@ void chess_pattern(sf::RenderWindow& window, sf::RectangleShape White_square, sf
 		int y = floor(i / 8);
 		int x = i - y * 8;
 		if ((x + y) % 2 == 0) {
-			White_square.setPosition(x * 80, y * 80);
+			White_square.setPosition(x * 150, y * 150);
 			window.draw(White_square);
 		}
 		else {
-			Black_square.setPosition(x * 80, y * 80);
+			Black_square.setPosition(x * 150, y * 150);
 			window.draw(Black_square);
 		}
 	}
@@ -142,19 +144,19 @@ void turn() {
 					if (event.mouseButton.button == sf::Mouse::Left) {
 						position = new sf::Vector2i(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
 						//check if pressed square is occupied by your colour
-						if ((board.colours[colour] >> (position->x / 80 + 8 * ((position->y) / 80))) & 1) {
+						if ((board.colours[colour] >> (position->x / 150 + 8 * ((position->y) / 150))) & 1) {
 							clicked = 1;
 							for (int i = 0; i < 6; i++) {
-								if (board.Types[i] >> (position->x / 80 + 8 * (position->y / 80)) & 1) {
+								if (board.Types[i] >> (position->x / 150 + 8 * (position->y / 150)) & 1) {
 									movedpiece = i + colour * 6;
-									board.Types[i] &= ~(1ULL << (position->x / 80 + 8 * ((position->y) / 80)));
+									board.Types[i] &= ~(1ULL << (position->x / 150 + 8 * ((position->y) / 150)));
 								}
 							}
-							board.Occupancy ^= 1ULL << (position->x / 80 + 8 * ((position->y) / 80));
-							board.colours[colour] ^= 1ULL << (position->x / 80 + 8 * ((position->y) / 80));
+							board.Occupancy ^= 1ULL << (position->x / 150 + 8 * ((position->y) / 150));
+							board.colours[colour] ^= 1ULL << (position->x / 150 + 8 * ((position->y) / 150));
 							sf::Vector2i to = move_piece(window, White_square, Black_square, movedpiece, colour);
 							for (int i = 0; i < Moves.size(); i++) {
-								if ((to.x / 80 + 8 * (to.y / 80)) == Moves[i].to && (position->x / 80 + 8 * (position->y / 80)) == Moves[i].from) {
+								if ((to.x / 150 + 8 * (to.y / 150)) == Moves[i].to && (position->x / 150 + 8 * (position->y / 150)) == Moves[i].from) {
 									yourturn = false;
 									make_move(Moves[i], colour);
 									for (int j = Moves.size() - 1; j > -1; j--) {
@@ -168,9 +170,9 @@ void turn() {
 				}
 			}
 			if (yourturn and clicked) {
-				board.Types[movedpiece - 6 * colour] ^= (1ULL << (position->x / 80 + 8 * (position->y / 80)));
-				board.Occupancy ^= 1ULL << (position->x / 80 + 8 * ((position->y) / 80));
-				board.colours[colour] ^= 1ULL << (position->x / 80 + 8 * ((position->y) / 80));
+				board.Types[movedpiece - 6 * colour] ^= (1ULL << (position->x / 150 + 8 * (position->y / 150)));
+				board.Occupancy ^= 1ULL << (position->x / 150 + 8 * ((position->y) / 150));
+				board.colours[colour] ^= 1ULL << (position->x / 150 + 8 * ((position->y) / 150));
 				update_graphics();
 			}
 			delete position;
@@ -179,7 +181,7 @@ void turn() {
 	else {
 		sf::Event events;
 		window.pollEvent(events);
-		make_move(*ai(5000, colour), colour);
+		make_move(*ai(10000, colour), colour);
 		update_graphics();
 	}
 

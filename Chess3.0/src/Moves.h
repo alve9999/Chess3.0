@@ -40,7 +40,7 @@ bool is_attacked(int pos, bool colour);
 
 void GenerateMoves(int colour, std::vector<Move>& Moves);
 
-Move make_move(Move& move, bool colour);
+Move make_move(Move& move, bool colour,const bool UCI = false);
 
 void unmake_move(Move& move, bool colour);
 

@@ -503,10 +503,10 @@ void GenerateMoves(int colour, std::vector<Move>& Moves) {
 
 
 
-Move make_move(Move& move,bool colour) {
+Move make_move(Move& move,bool colour,const bool UCI) {
 	//std::cout << (int)move.from << " " << (int)move.to << " " << (int)move.fromtype << " " << (int)move.special << std::endl;
 	//capture
-	if (move.special & 16ULL) {
+        if ((move.special & 16ULL) | (UCI)) {
 		//clears to square
 		board.colours[!colour] &= ~(1ULL << move.to);
 		board.Occupancy &= ~(1ULL << move.to);

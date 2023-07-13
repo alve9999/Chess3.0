@@ -1,5 +1,6 @@
 #include "Ai.h"
 #include "Hash.h"
+#include "Graphics.h"
 #include <chrono>
 #include <thread>
 #include <cmath>
@@ -34,12 +35,8 @@ int MinMax(int depth,bool colour,bool first,float alpha,float beta, uint64_t key
 	else {
 		std::vector<Move> local_moves;
 		GenerateMoves(colour, local_moves);
-		if(global_depth==depth && global_depth!=1){
-		        local_moves.erase(std::remove(local_moves.begin(), local_moves.end(), *best_move), local_moves.end());
-			local_moves.insert(local_moves.begin(), *best_move);
-		}
-		if (local_moves.size() == 0) {
-			unsigned long king;
+	        if (local_moves.size() == 0) {
+	                unsigned long king;
 			_BitScanForward64(&king, board.colours[colour] & board.Types[k]);
 			if (is_attacked(king, colour)) {
 				return INFINITY;
@@ -47,6 +44,10 @@ int MinMax(int depth,bool colour,bool first,float alpha,float beta, uint64_t key
 			else {
 				return 0;
 			}
+		}
+		if(global_depth==depth && global_depth!=1){
+		        local_moves.erase(std::remove(local_moves.begin(), local_moves.end(), *best_move), local_moves.end());
+			local_moves.insert(local_moves.begin(), *best_move);
 		}
 		for (int i = 0; i < local_moves.size(); i++) {
 			Move made_move = make_move(local_moves[i], colour);
