@@ -2,14 +2,15 @@
 #include <string>
 #include "UCI.h"
 #include "src/Board.h"
+#include "src/Ai.h"
 
-void sendUCIResponse(const std::string& response) {
+void send_UCI_response(const std::string& response) {
     std::cout << response << std::endl;
 }
 
-void handlePosition(const std::string& positionCommand) {
-    std::cout << positionCommand << "\n";
-    std::string pos = positionCommand.substr(0, positionCommand.find(" "));
+void handle_position(const std::string& position_command) {
+    std::cout << position_command << "\n";
+    std::string pos = position_command.substr(0, position_command.find(" "));
     if (pos == "startpos") {
         load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     }
@@ -18,8 +19,9 @@ void handlePosition(const std::string& positionCommand) {
     }
 }
 
-void handleGo(const std::string& goCommand) {
-
+void handle_go(const std::string& goCommand) {
+    Move* best_move = ai(3000,1);
+    send_UCI_response(best_move->to_algebraic());
 }
 
 void UCI() {
@@ -29,18 +31,18 @@ void UCI() {
         std::getline(std::cin, command);
 
         if (command == "uci") {
-            sendUCIResponse("id name Chess3.0");
-            sendUCIResponse("id author Alve");
-            sendUCIResponse("uciok");
+            send_UCI_response("id name Chess3.0");
+            send_UCI_response("id author Alve");
+            send_UCI_response("uciok");
         }
         else if (command == "isready") {
-            sendUCIResponse("readyok");
+            send_UCI_response("readyok");
         }
         else if (command.compare(0, 8, "position") == 0) {
-            handlePosition(command.substr(9,command.length()));
+            handle_position(command.substr(9,command.length()));
         }
         else if (command.compare(0, 2, "go") == 0) {
-            handleGo(command);
+            handle_go(command);
         }
         else if (command == "quit") {
             break;

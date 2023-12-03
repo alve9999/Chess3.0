@@ -11,8 +11,8 @@
 #include "src/Evaluation.h"
 #include "src/Hash.h"
 #include "src/Graphics.h"
+#include "UCI.h"
 
-using namespace std;
 
 int main(){
     board.enpassant.push(-1);
@@ -23,6 +23,7 @@ int main(){
     
     srand(0);
     gen_random(random_key);
-    run_game();
+    //run_game();
+    UCI();
 }
 
