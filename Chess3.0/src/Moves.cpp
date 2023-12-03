@@ -504,17 +504,13 @@ void GenerateMoves(int colour, std::vector<Move>& Moves) {
 
 
 
-Move make_move(Move& move,bool colour,const bool UCI) {
-	//std::cout << (int)move.from << " " << (int)move.to << " " << (int)move.fromtype << " " << (int)move.special << std::endl;
+Move make_move(Move& move,bool colour) {
 	//capture
-        if ((move.special & 16ULL) | (UCI)) {
+    if (move.special & 16ULL) {
 		//clears to square
 		board.colours[!colour] &= ~(1ULL << move.to);
 		board.Occupancy &= ~(1ULL << move.to);
 		for (int i = 0; i < 6; i++) {
-		  if(i==5){
-		    std::cout<<move<<std::endl;
-		  }
 			if ((board.Types[i] >> move.to) & 1) {
 				move.totype = i;
 				board.Types[i] &= ~(1ULL << move.to);
@@ -717,8 +713,6 @@ Info perft(int depth, int colour) {
 		in.caps += ret.caps;
 		in.nodes += ret.nodes;
 		if ((moves[i].special & 16ULL) && (depth == 1)) {
-			//std::cout << moves[i] << std::endl;
-			//std::cout << colour << std::endl;
 			in.caps += 1;
 		}
 		unmake_move(moves[i], colour);

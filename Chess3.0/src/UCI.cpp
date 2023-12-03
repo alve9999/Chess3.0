@@ -9,6 +9,7 @@
 #include "Bit.h"
 #include "UCI.h"
 #include "Board.h"
+#include "Graphics.h"
 #include <fstream>
 
 int alg_to_coord(const std::string& square)
@@ -26,49 +27,52 @@ Move* algebraic_to_move(std::string alg){
     int special = 0;
     int type = 0;
     if(ISSET(board.Types[p],from)){
-      type = p;
+        type = p;
     }
     if(ISSET(board.Types[b],from)){
-      type = b;
+        type = b;
     }
     if(ISSET(board.Types[n],from)){
-      type = n;
+        type = n;
     }
     if(ISSET(board.Types[r],from)){
-      type = r;
+        type = r;
     }
     if(ISSET(board.Types[q],from)){
-      type = q;
+        type = q;
     }
     if(ISSET(board.Types[k],from)){
-      type = k;
+        type = k;
     }
     if(abs(to-from)==16 and (type == p)){
-      special = 1;
+        special |= 1;
     }
     if((RANK(to)==0 or RANK(to)==7) and (type == p)){
-      special = 2;
+        special |= 2;
+    }
+    if (ISSET(board.Occupancy, to)) {
+        special |= 16;
     }
     if((abs(to-from)==7 or abs(to-from)==9) and (type == p) and (NOTSET(board.Occupancy,to))){
-      special = 32;
+        special |= 32;
     }
     if(type == k){
-      if(from==4){
-	if(to==6){
-	  special = 4;
-	}
-	if(to==2){
-	  special = 8;
-	}
-      }
-      if(from == 60){
-	if(to==62){
-	  special = 4;
-	}
-	if(to == 58){
-	  special = 8;
-	}
-      }
+        if(from==4){
+	        if(to==6){
+	            special |= 4;
+	        }
+	        if(to==2){
+	            special |= 8;
+	        }
+        }
+        if(from == 60){
+	        if(to==62){
+	            special |= 4;
+	        }
+	        if(to == 58){
+	            special |= 8;
+	        }
+        }
     }
     return new Move(from,to,special,type);
 }
@@ -77,8 +81,7 @@ std::string to_algebraic(int row, int col) {
     return std::string(1, 'a' + col) + std::to_string(8 - row);
 }
 void proccess_command(std::string str,bool colour){
-    std::ofstream debugFile("debug.txt", std::ios::app);
-    debugFile<<"command:"<<str<<std::endl;
+    std::cout<<"command:"<<str<<std::endl;
     std::vector<std::string> tokens;
     std::stringstream ss(str);
     std::string token;
@@ -87,14 +90,15 @@ void proccess_command(std::string str,bool colour){
     while(std::getline(ss, token, ' ')) {
         tokens.push_back(token);
     }
+    if (tokens[0] == "quit") {
+        exit(1);
+    }
     if(tokens[0] == "position"){
-      if(tokens.back()=="startpos"){
-      }
-      else{
-	Move *move = algebraic_to_move(tokens.back());
-	make_move(*move,!colour,true);
-	delete move;
-      }
+        if(tokens.back()!="startpos"){
+	        Move *move = algebraic_to_move(tokens.back());
+	        make_move(*move,!colour);
+	        delete move;
+        }
     }
     if (tokens[0] == "isready") {
         std::cout << "readyok\n";
@@ -104,19 +108,20 @@ void proccess_command(std::string str,bool colour){
     } 
     else if (tokens[0] == "go") {
         Move move = *ai(2000, colour);
-	make_move(move,colour);
-	int from = move.from;
-	int to = move.to;
-        std::cout <<"bestmove "<< to_algebraic(RANK(from),FILE(from)) << to_algebraic(RANK(to),FILE(to)) << std::endl;
+	    make_move(move,colour);
+	    int from = move.from;
+	    int to = move.to;
+        std::string promotion = (move.special == 0b10) ? "q" : "";
+        std::cout <<"bestmove "<< to_algebraic(RANK(from),FILE(from)) << to_algebraic(RANK(to),FILE(to)) << promotion << std::endl;
     }
 }
 
 void uci_run_game(bool colour){
     while(1){
         if (std::cin.peek() != EOF) {
-	    std::string str;
-	    std::getline(std::cin, str);
-	    proccess_command(str,colour);
+	        std::string str;
+	        std::getline(std::cin, str);
+	        proccess_command(str,colour);
         }
     }
 }

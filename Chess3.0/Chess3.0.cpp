@@ -11,7 +11,7 @@
 #include "src/Evaluation.h"
 #include "src/Hash.h"
 #include "src/Graphics.h"
-#include "UCI.h"
+#include "src/UCI.h"
 
 
 int main(){
@@ -19,11 +19,12 @@ int main(){
     Magic_initialisation();
     gennTable();
     load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-    Ginit();
+    //Ginit();
     
     srand(0);
+    //std::cout << perft(6, 1).nodes << std::endl;
     gen_random(random_key);
     //run_game();
-    UCI();
+    uci_run_game(1);
 }
 

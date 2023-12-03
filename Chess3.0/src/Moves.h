@@ -27,9 +27,8 @@ struct Move{
 	uint8_t totype;
 	Move(uint8_t aFrom, uint8_t aTo, uint8_t aSpecial, uint8_t aFromtype);
 	bool operator==(const Move& other) const;
-	std::string to_algebraic();
-	
 };
+
 std::ostream& operator<<(std::ostream& os, const Move& obj);
 
 struct Info {
@@ -41,7 +40,7 @@ bool is_attacked(int pos, bool colour);
 
 void GenerateMoves(int colour, std::vector<Move>& Moves);
 
-Move make_move(Move& move, bool colour,const bool UCI = false);
+Move make_move(Move& move, bool colour);
 
 void unmake_move(Move& move, bool colour);
 
