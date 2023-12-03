@@ -50,28 +50,6 @@ bool Move::operator==(const Move& other) const {
 	return other.from == from && other.to == to;
 }
 
-std::string int_to_string(int index) {
-	const std::string rank_letters = "abcdefgh";
-
-	int rank = index / 8;
-	int file = index % 8;
-
-	std::string str = rank_letters[rank] + std::to_string(file);
-
-	return str;
-}
-
-std::string Move::to_algebraic()
-{
-	std::string algebraic = int_to_string(from) + int_to_string(to);
-
-	if (special==0b10)
-	{
-		algebraic+="q";
-	}
-
-	return algebraic;
-}
 
 std::ostream& operator<<(std::ostream& os, const Move& obj)
 {

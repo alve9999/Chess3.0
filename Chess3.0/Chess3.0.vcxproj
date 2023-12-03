@@ -180,7 +180,8 @@
     <ClCompile Include="src\Magic.cpp" />
     <ClCompile Include="src\Moves.cpp" />
     <ClCompile Include="src\Bit.cpp" />
-    <ClCompile Include="UCI.cpp" />
+    <ClCompile Include="src\Test.cpp" />
+    <ClCompile Include="src\UCI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Ai.h" />
@@ -191,7 +192,8 @@
     <ClInclude Include="src\Hash.h" />
     <ClInclude Include="src\Magic.h" />
     <ClInclude Include="src\Moves.h" />
-    <ClInclude Include="UCI.h" />
+    <ClInclude Include="src\Test.h" />
+    <ClInclude Include="src\UCI.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="bb.png" />
