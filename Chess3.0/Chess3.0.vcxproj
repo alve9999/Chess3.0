@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>c:\SFML-2.5.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>c:\SFML-2.6.1\include</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -142,7 +142,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>sfml-graphics-d.lib;sfml-system-d.lib;sfml-network-d.lib;sfml-window-d.lib;sfml-audio-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>c:\SFML-2.5.1\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>c:\SFML-2.6.1\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -173,12 +173,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Chess3.0.cpp" />
-    <ClCompile Include="imgui-SFML.cpp" />
-    <ClCompile Include="imgui.cpp" />
-    <ClCompile Include="imgui_demo.cpp" />
-    <ClCompile Include="imgui_draw.cpp" />
-    <ClCompile Include="imgui_tables.cpp" />
-    <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="src\Ai.cpp" />
     <ClCompile Include="src\Board.cpp" />
     <ClCompile Include="src\Graphics.cpp" />
@@ -186,14 +180,9 @@
     <ClCompile Include="src\Magic.cpp" />
     <ClCompile Include="src\Moves.cpp" />
     <ClCompile Include="src\Bit.cpp" />
-    <ClCompile Include="src\Evaluation.cpp" />
+    <ClCompile Include="UCI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="imgui-SFML.h" />
-    <ClInclude Include="imgui-SFML_export.h" />
-    <ClInclude Include="imstb_rectpack.h" />
-    <ClInclude Include="imstb_textedit.h" />
-    <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="src\Ai.h" />
     <ClInclude Include="src\Board.h" />
     <ClInclude Include="src\Bit.h" />
@@ -202,6 +191,7 @@
     <ClInclude Include="src\Hash.h" />
     <ClInclude Include="src\Magic.h" />
     <ClInclude Include="src\Moves.h" />
+    <ClInclude Include="UCI.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="bb.png" />

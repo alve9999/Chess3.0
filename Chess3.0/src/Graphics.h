@@ -18,8 +18,6 @@ sf::Vector2i move_piece(sf::RenderWindow& window, sf::RectangleShape White_squar
 
 void print_piece_info();
 
-void imgui_update();
-
 void update_graphics();
 
 void turn();
