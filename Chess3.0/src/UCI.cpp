@@ -11,8 +11,9 @@
 #include "Board.h"
 #include "Graphics.h"
 #include <fstream>
+#include "../book.h"
 
-
+bool first = true;
 void proccess_command(std::string str,bool colour){
     std::cout<<"command:"<<str<<std::endl;
     std::vector<std::string> tokens;
@@ -40,6 +41,10 @@ void proccess_command(std::string str,bool colour){
         std::cout << "id name chess_engien\nid author Alve Lindell\nuciok\n";
     } 
     else if (tokens[0] == "go") {
+        if(first){
+            read_book();
+            first = false;
+        }
         Move move = *ai(2000, colour);
 	    make_move(move,colour);
 	    int from = move.from;

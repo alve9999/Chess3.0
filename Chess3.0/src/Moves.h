@@ -38,7 +38,8 @@ struct Info {
 
 bool is_attacked(int pos, bool colour);
 
-void GenerateMoves(int colour, std::vector<Move>& Moves);
+void GenerateLegalMoves(int colour, std::vector<Move>& Moves);
+void GeneratePseudoMoves(int colour, std::vector<Move>& Moves);
 
 Move make_move(Move& move, bool colour);
 

@@ -19,7 +19,7 @@ std::string dir = "C:/Users/alvel/Desktop/Dev/C++/Chess/Chess3.0/";
 sf::RenderWindow window;
 
 std::vector<sf::Sprite> sprites;
-std::string sprite_names[] = { dir+"bp.png", dir+"bn.png", dir+"bb.png", dir+"br.png", dir+"bq.png", dir+"bk.png", dir+"wp.png", dir+"wn.png", dir+"wb.png", dir+"wr.png", dir+"wq.png", dir+"wk.png" };
+std::string sprite_names[] = { "bp.png", "bn.png", "bb.png", "br.png", "bq.png", "bk.png", "wp.png", "wn.png", "wb.png", "wr.png", "wq.png", "wk.png" };
 sf::Texture ssprites[12];
 
 sf::Clock deltaClock;
@@ -157,12 +157,12 @@ void end_game(bool win) {
 
 bool turn() {
 	std::vector<Move> Moves;
-	GenerateMoves(colour, Moves);
-	if (Moves.size() == 0) {
+	GenerateLegalMoves(colour, Moves);
+	if (Moves.empty()) {
 		return true;
 	}
 	update_graphics();
-	if ((your_colour == colour) or 0) {
+	if (((your_colour == colour) or 0) and 0) {
 		bool yourturn = 1;
 		while (yourturn) {
 			bool clicked = 0;
@@ -211,7 +211,7 @@ bool turn() {
 	else {
 		sf::Event events;
 		window.pollEvent(events);
-		make_move(*ai(3000, colour), colour);
+		make_move(*ai(1000, colour), colour);
 		update_graphics();
 	}
 

@@ -440,18 +440,34 @@ void KingTableMoves(uint64_t a, int colour, std::vector<Move>& Moves, int positi
 		}
 	}
 }
+void KingPseudoTableMoves(uint64_t a, int colour, std::vector<Move>& Moves, int position) {
+	uint8_t* t = static_cast<uint8_t*>(static_cast<void*>(&a));
+	for (uint8_t i = 0; i < 8; i++) {
+		if (t[i]) {
+			for (uint8_t j = 0; j < 8; j++) {
+				if ((t[i] >> j & 1) and (1 & ~((board.Occupancy >> (i * 8 + j))))) {
+					Moves.vector::emplace_back(position, i * 8 + j, 0, k);
+				}
+				else if ((t[i] >> j & 1) and ((board.colours[!colour] >> (i * 8 + j) & 1))) {
+					Moves.vector::emplace_back(position, i * 8 + j, 16, k);
+				}
+			}
+		}
+	}
+}
 
 
 //Function that generates all current legal moves for the current player
-void GenerateMoves(int colour, std::vector<Move>& Moves) {
+void GenerateLegalMoves(int colour, std::vector<Move>& Moves) {
 	//By reserving 50 moves the need for rezising the vector is reduced due to the amount of moves rarley exceeding 50 thereby greatly improving performance
-	Moves.reserve(50);
+	Moves.reserve(80);
 	std::unordered_map<int, uint64_t> map;
 	uint64_t pinned = check_pin(colour,map);
 	unsigned long king;
 	_BitScanForward64(&king,board.colours[colour] & board.Types[k]);
 	bool check = is_attacked(king, colour);
 	//Calls move calculation for each picece of the choosen colour
+	
 	if (!check) {
 		Castling(colour, Moves);
 	}
@@ -502,6 +518,70 @@ void GenerateMoves(int colour, std::vector<Move>& Moves) {
 	std::sort(Moves.begin(), Moves.end(), [](Move a, Move b){return a.special > b.special;});
 }
 
+
+void GeneratePseudoMoves(int colour, std::vector<Move>& Moves) {
+	Moves.reserve(80);
+	std::unordered_map<int, uint64_t> map;
+	uint64_t pinned = check_pin(colour, map);
+	if(popCount64bit(board.Types[k])!=2){
+		return;
+	}
+	unsigned long king;
+	_BitScanForward64(&king, board.colours[colour] & board.Types[k]);
+	bool check = is_attacked(king, colour);
+	//Calls move calculation for each picece of the choosen colour
+
+	if (!check) {
+		Castling(colour, Moves);
+	}
+	for (int i = 0; i < 64; i++) {
+		if (ISSET(board.colours[colour], i)) {
+			if (ISSET(pinned, i)) {
+				if ((board.Types[p] >> i) & colour)
+					bPmoves(i, Moves, map[i]);
+				if ((board.Types[p] >> i) & (!colour))
+					wPmoves(i, Moves, map[i]);
+				if ((board.Types[b] >> i) & 1)
+					TableMoves(getBmagic(i, board.Occupancy), colour, Moves, i, 2, map[i]);
+				if ((board.Types[r] >> i) & 1)
+					TableMoves(getRmagic(i, board.Occupancy), colour, Moves, i, 3, map[i]);
+				if ((board.Types[n] >> i) & 1)
+					TableMoves(nTable[i], colour, Moves, i, 1, map[i]);
+				if ((board.Types[q] >> i) & 1) {
+					TableMoves(getBmagic(i, board.Occupancy), colour, Moves, i, 4, map[i]);
+					TableMoves(getRmagic(i, board.Occupancy), colour, Moves, i, 4, map[i]);
+				}
+			}
+			else {
+				if ((board.Types[p] >> i) & colour)
+					bPmoves(i, Moves);
+				if ((board.Types[p] >> i) & (!colour))
+					wPmoves(i, Moves);
+				if ((board.Types[b] >> i) & 1)
+					TableMoves(getBmagic(i, board.Occupancy), colour, Moves, i, 2);
+				if ((board.Types[r] >> i) & 1)
+					TableMoves(getRmagic(i, board.Occupancy), colour, Moves, i, 3);
+				if ((board.Types[n] >> i) & 1)
+					TableMoves(nTable[i], colour, Moves, i, 1);
+				if ((board.Types[q] >> i) & 1) {
+					TableMoves(getBmagic(i, board.Occupancy), colour, Moves, i, 4);
+					TableMoves(getRmagic(i, board.Occupancy), colour, Moves, i, 4);
+				}
+			}
+		}
+	}
+	if (check) {
+		auto remove = std::bind(fixes_check, std::placeholders::_1, colour);
+		Moves.erase(std::remove_if(Moves.begin(), Moves.end(), remove), Moves.end());
+	}
+	if (Moves.empty()) {
+		KingTableMoves(kTable[king],colour,Moves,king);
+	}
+	else{
+		KingPseudoTableMoves(kTable[king], colour, Moves, king);
+	}
+	std::sort(Moves.begin(), Moves.end(), [](Move a, Move b) {return a.special > b.special; });
+}
 
 
 Move make_move(Move& move, bool colour) {
@@ -703,7 +783,7 @@ Info perft(int depth, int colour) {
 
 	unsigned long long nodes = 0;
 	std::vector<Move> moves;
-	GenerateMoves(colour,moves);
+	GenerateLegalMoves(colour,moves);
 
 	for (size_t i = 0; i < moves.size(); i++) {
 	       

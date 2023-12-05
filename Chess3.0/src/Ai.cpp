@@ -36,12 +36,12 @@ int MinMax(int depth,bool colour,float alpha,float beta, uint64_t key,float scor
 	}
 	else {
 		std::vector<Move> local_moves;
-		GenerateMoves(colour, local_moves);
+		GenerateLegalMoves(colour, local_moves);
 	    if (local_moves.size() == 0) {
 			unsigned long king;
 			_BitScanForward64(&king, board.colours[colour] & board.Types[k]);
 			if (is_attacked(king, colour)) {
-				return -(int)(1000000.0f)*(((float)depth));
+				return -(int)((1000000.0f)*((float)depth));
 			}
 			else {
 				return 0;
@@ -101,7 +101,6 @@ bool book_used=false;
 Move* ai(int time,bool colour) {
 	if (!book_used) {
 		std::string fen = create_fen();
-		std::cout << fen << std::endl;
 		auto it = the_book->find(fen);
 		if(it != the_book->end()){
 			return algebraic_to_move(the_book->at(fen));
