@@ -17,8 +17,8 @@ uint64_t kTable[64] = {};
 
 
 void gennTable() {
-	const int directions[2][8] = { {6,10,-6,-10,17,15,-17,-15 }, { 1,-1, -7, -8, -9, 7, 8, 9 }};
-	const int tiles[2][8] = { {1,1,-1,-1,2,2,-2,-2},{ 0,0,-1,-1,-1,1,1,1 } };
+	constexpr  int directions[2][8] = { {6,10,-6,-10,17,15,-17,-15 }, { 1,-1, -7, -8, -9, 7, 8, 9 }};
+	constexpr  int tiles[2][8] = { {1,1,-1,-1,2,2,-2,-2},{ 0,0,-1,-1,-1,1,1,1 } };
 	for (int k = 0; k < 2; k++) {
 		for (int j = 0; j < 64; j++) {
 			uint64_t possibleMoves = 0;
@@ -65,15 +65,15 @@ uint64_t check_pin(bool colour, std::unordered_map<int, uint64_t>& map) {
 	uint64_t pinned = 0;
 	unsigned long king;
 	_BitScanForward64(&king, board.colours[colour] & board.Types[k]);
-	uint8_t x = FILE(king);
-	uint8_t y = RANK(king);
-	int dir_x[NUM_DIRECTIONS] = DIR_X;
-	int dir_y[NUM_DIRECTIONS] = DIR_Y;
+	const uint8_t x = FILE(king);
+	const uint8_t y = RANK(king);
+	const int dir_x[NUM_DIRECTIONS] = DIR_X;
+	const int dir_y[NUM_DIRECTIONS] = DIR_Y;
 	for (int dir = 0; dir < NUM_DIRECTIONS; dir++) {
 		uint8_t pos = 255;
 		for (int i = 1; i < 8; ++i) {
-			int cur_x = x + dir_x[dir] * i;
-			int cur_y = y + dir_y[dir] * i;
+			const int cur_x = x + dir_x[dir] * i;
+			const int cur_y = y + dir_y[dir] * i;
 			if (cur_x < 0 || cur_x >= 8 || cur_y < 0 || cur_y >= 8) {
 				break;
 			}
@@ -92,8 +92,8 @@ uint64_t check_pin(bool colour, std::unordered_map<int, uint64_t>& map) {
 				SET(pinned, pos);
 				uint64_t mask = 0;
 				for (int i = 1; i < 8; ++i) {
-					int cur_x2 = x + dir_x[dir] * i;
-					int cur_y2 = y + dir_y[dir] * i;
+					const int cur_x2 = x + dir_x[dir] * i;
+					const int cur_y2 = y + dir_y[dir] * i;
 					if (cur_x2 < 0 || cur_x2 >= 8 || cur_y2 < 0 || cur_y2 >= 8) {
 						break;
 					}
@@ -106,7 +106,7 @@ uint64_t check_pin(bool colour, std::unordered_map<int, uint64_t>& map) {
 	}
 	return pinned;
 }
-#include <stdio.h>
+
 bool is_attacked(int pos, bool colour) {
 	if (colour == W) {
 		if (RANK(pos) != 0) {
@@ -199,10 +199,10 @@ void TableMoves(uint64_t a,int colour, std::vector<Move>& Moves,int position,int
 		if (t[i]) {
 			for (uint8_t j = 0; j < 8; j++) {
 				if ((t[i]>>j&1) and (1&~((board.Occupancy>> (i * 8 + j))))) {
-					Moves.vector::emplace_back(Move(position,i * 8 + j, 0 ,type));
+					Moves.vector::emplace_back(position,i * 8 + j, 0 ,type);
 				}
 				else if ((t[i] >> j & 1) and ((board.colours[!colour] >> (i * 8 + j) & 1))) {
-					Moves.vector::emplace_back(Move(position, i * 8 + j, 16,type));
+					Moves.vector::emplace_back(position, i * 8 + j, 16,type);
 				}
 			}
 		}
@@ -216,11 +216,11 @@ void TableMoves(uint64_t a, int colour, std::vector<Move>& Moves, int position, 
 			for (uint8_t j = 0; j < 8; j++) {
 				if ((t[i] >> j & 1) and (1 & ~((board.Occupancy >> (i * 8 + j))))) {
 					if(ISSET(mask,8*i+j))
-						Moves.vector::emplace_back(Move(position, i * 8 + j, 0, type));
+						Moves.vector::emplace_back(position, i * 8 + j, 0, type);
 				}
 				else if ((t[i] >> j & 1) and ((board.colours[!colour] >> (i * 8 + j) & 1))) {
 					if (ISSET(mask, 8*i +j))
-						Moves.vector::emplace_back(Move(position, i * 8 + j, 16, type));
+						Moves.vector::emplace_back(position, i * 8 + j, 16, type);
 				}
 			}
 		}
@@ -233,76 +233,76 @@ void TableMoves(uint64_t a, int colour, std::vector<Move>& Moves, int position, 
 void wPmoves(int position, std::vector<Move>& Moves) {
 	if (NOTSET(board.Occupancy,position-8)) {
 		if (NOTSET(board.Occupancy, position - 16) && RANK(position) == 6) {
-			Moves.vector::emplace_back(Move(position, position - 16, 1, 0));
+			Moves.vector::emplace_back(position, position - 16, 1, 0);
 		}
 		if (RANK(position-8) == 0) {
-			Moves.vector::emplace_back(Move(position, position - 8, 2, 0));
+			Moves.vector::emplace_back(position, position - 8, 2, 0);
 		}
 		else {
-			Moves.vector::emplace_back(Move(position, position - 8, 0, 0));
+			Moves.vector::emplace_back(position, position - 8, 0, 0);
 		}
 	}
 	if ((RANK(position) - RANK(position - 9) == 1) && (ISSET(board.colours[B], position - 9))) {
 		if (RANK(position -8) == 0) {
-			Moves.vector::emplace_back(Move(position, position - 9, 18, 0));
+			Moves.vector::emplace_back(position, position - 9, 18, 0);
 		}
 		else {
-			Moves.vector::emplace_back(Move(position, position - 9, 16, 0));
+			Moves.vector::emplace_back(position, position - 9, 16, 0);
 		}
 	}
 	else if ((RANK(position) - RANK(position - 9) == 1) && ((position - 9) == board.enpassant.top())) {
 		if (!fixes_check(Move(position, position - 9, 32, 0), W))
-			Moves.vector::emplace_back(Move(position, position - 9, 32, 0));
+			Moves.vector::emplace_back(position, position - 9, 32, 0);
 	}
 	if ((RANK(position) - RANK(position - 7) == 1) && (ISSET(board.colours[B],position-7))) {
 		if (RANK(position - 8) == 0) {
-			Moves.vector::emplace_back(Move(position, position - 7, 18, 0));
+			Moves.vector::emplace_back(position, position - 7, 18, 0);
 		}
 		else {
-			Moves.vector::emplace_back(Move(position, position - 7, 16, 0));
+			Moves.vector::emplace_back(position, position - 7, 16, 0);
 		}
 	}
 	else if ((RANK(position) - RANK(position - 7) == 1) && ((position - 7) == board.enpassant.top())) {
 		if(!fixes_check(Move(position, position - 7, 32, 0),W))
-			Moves.vector::emplace_back(Move(position, position - 7, 32, 0));
+			Moves.vector::emplace_back(position, position - 7, 32, 0);
 	}
 }
 //Black pawn move generator using bitwise operations on bit boards
 void bPmoves(int position, std::vector<Move>& Moves) {
 	if(NOTSET(board.Occupancy, position + 8)) {
 		if (NOTSET(board.Occupancy, position + 16)&&(RANK(position)==1)) {
-			Moves.vector::emplace_back(Move(position, position + 16, 1, 0));
+			Moves.vector::emplace_back(position, position + 16, 1, 0);
 		}
 		if (RANK(position + 8) == 7) {
-			Moves.vector::emplace_back(Move(position, position + 8, 2, 0));
+			Moves.vector::emplace_back(position, position + 8, 2, 0);
 		}
 		else {
-			Moves.vector::emplace_back(Move(position, position + 8, 0, 0));
+			Moves.vector::emplace_back(position, position + 8, 0, 0);
 		}
 	}
 	if ((RANK(position) - RANK(position + 9) == -1) && (ISSET(board.colours[W], position + 9))) {
 		if (RANK(position + 8) == 7) {
-			Moves.vector::emplace_back(Move(position, position + 9, 18, 0));
+			Moves.vector::emplace_back(position, position + 9, 18, 0);
 		}
 		else {
-			Moves.vector::emplace_back(Move(position, position + 9, 16, 0));
+			Moves.vector::emplace_back(position, position + 9, 16, 0);
 		}
 	}
 	else if ((RANK(position) - RANK(position + 9) == -1) && ((position + 9) == board.enpassant.top())) {
 		if (!fixes_check(Move(position, position + 9, 32, 0), B))
-			Moves.vector::emplace_back(Move(position, position + 9, 32, 0));
+			Moves.vector::emplace_back(position, position + 9, 32, 0);
 	}
 	if ((RANK(position) - RANK(position + 7) == -1) && (ISSET(board.colours[W], position + 7))) {
 		if (RANK(position + 8) == 7) {
-			Moves.vector::emplace_back(Move(position, position + 7, 18, 0));
+			Moves.vector::emplace_back(position, position + 7, 18, 0);
 		}
 		else {
-			Moves.vector::emplace_back(Move(position, position + 7, 16, 0));
+			Moves.vector::emplace_back(position, position + 7, 16, 0);
 		}
 	}
 	else if ((RANK(position) - RANK(position + 7) == -1) && ((position + 7) == board.enpassant.top())) {
 		if (!fixes_check(Move(position, position +7, 32, 0), B))
-			Moves.vector::emplace_back(Move(position, position + 7, 32, 0));
+			Moves.vector::emplace_back(position, position + 7, 32, 0);
 	}
 }
 
@@ -310,44 +310,44 @@ void wPmoves(int position, std::vector<Move>& Moves, uint64_t mask) {
 	if (NOTSET(board.Occupancy, position - 8)) {
 		if (NOTSET(board.Occupancy, position - 16) && RANK(position) == 6) {
 			if (ISSET(mask, position-16))
-			Moves.vector::emplace_back(Move(position, position - 16, 1, 0));
+			Moves.vector::emplace_back(position, position - 16, 1, 0);
 		}
 		if (RANK(position - 8) == 0) {
 			if (ISSET(mask, position-8))
-			Moves.vector::emplace_back(Move(position, position - 8, 2, 0));
+			Moves.vector::emplace_back(position, position - 8, 2, 0);
 		}
 		else {
 			if (ISSET(mask, position-8))
-			Moves.vector::emplace_back(Move(position, position - 8, 0, 0));
+			Moves.vector::emplace_back(position, position - 8, 0, 0);
 		}
 	}
 	if ((RANK(position) - RANK(position - 9) == 1) && (ISSET(board.colours[B], position - 9))) {
 		if (RANK(position - 8) == 0) {
 			if (ISSET(mask, position-9))
-			Moves.vector::emplace_back(Move(position, position - 9, 18, 0));
+			Moves.vector::emplace_back(position, position - 9, 18, 0);
 		}
 		else {
 			if (ISSET(mask, position-9))
-			Moves.vector::emplace_back(Move(position, position - 9, 16, 0));
+			Moves.vector::emplace_back(position, position - 9, 16, 0);
 		}
 	}
 	else if ((RANK(position) - RANK(position - 9) == 1) && ((position - 9) == board.enpassant.top())) {
 		if (!fixes_check(Move(position, position - 9, 32, 0), W))
-			Moves.vector::emplace_back(Move(position, position - 9, 32, 0));
+			Moves.vector::emplace_back(position, position - 9, 32, 0);
 	}
 	if ((RANK(position) - RANK(position - 7) == 1) && (ISSET(board.colours[B], position - 7))) {
 		if (RANK(position - 8) == 0) {
 			if (ISSET(mask, position-7))
-			Moves.vector::emplace_back(Move(position, position - 7, 18, 0));
+			Moves.vector::emplace_back(position, position - 7, 18, 0);
 		}
 		else {
 			if (ISSET(mask, position-7))
-			Moves.vector::emplace_back(Move(position, position - 7, 16, 0));
+			Moves.vector::emplace_back(position, position - 7, 16, 0);
 		}
 	}
 	else if ((RANK(position) - RANK(position - 7) == 1) && ((position -7) == board.enpassant.top())) {
 		if (!fixes_check(Move(position, position - 7, 32, 0), W))
-			Moves.vector::emplace_back(Move(position, position - 7, 32, 0));
+			Moves.vector::emplace_back(position, position - 7, 32, 0);
 	}
 }
 
@@ -355,44 +355,44 @@ void bPmoves(int position, std::vector<Move>& Moves,uint64_t mask) {
 	if (NOTSET(board.Occupancy, position + 8)) {
 		if (NOTSET(board.Occupancy, position + 16) && (RANK(position) == 1)) {
 			if(ISSET(mask,position+16))
-			Moves.vector::emplace_back(Move(position, position + 16, 1, 0));
+			Moves.vector::emplace_back(position, position + 16, 1, 0);
 		}
 		if (RANK(position + 8) == 7) {
 			if (ISSET(mask, position+8))
-			Moves.vector::emplace_back(Move(position, position + 8, 2, 0));
+			Moves.vector::emplace_back(position, position + 8, 2, 0);
 		}
 		else {
 			if (ISSET(mask, position+8))
-			Moves.vector::emplace_back(Move(position, position + 8, 0, 0));
+			Moves.vector::emplace_back(position, position + 8, 0, 0);
 		}
 	}
 	if ((RANK(position) - RANK(position + 9) == -1) && (ISSET(board.colours[W], position + 9))) {
 		if (RANK(position + 8) == 7) {
 			if (ISSET(mask, position+9))
-			Moves.vector::emplace_back(Move(position, position + 9, 18, 0));
+			Moves.vector::emplace_back(position, position + 9, 18, 0);
 		}
 		else {
 			if (ISSET(mask, position+9))
-			Moves.vector::emplace_back(Move(position, position + 9, 16, 0));
+			Moves.vector::emplace_back(position, position + 9, 16, 0);
 		}
 	}
 	else if ((RANK(position) - RANK(position + 9) == -1) && ((position + 9) == board.enpassant.top())) {
 		if (!fixes_check(Move(position, position + 9, 32, 0), B))
-			Moves.vector::emplace_back(Move(position, position + 9, 32, 0));
+			Moves.vector::emplace_back(position, position + 9, 32, 0);
 	}
 	if ((RANK(position) - RANK(position + 7) == -1) && (ISSET(board.colours[W], position + 7))) {
 		if (RANK(position + 8) == 7) {
 			if (ISSET(mask, position+7))
-			Moves.vector::emplace_back(Move(position, position + 7, 18, 0));
+			Moves.vector::emplace_back(position, position + 7, 18, 0);
 		}
 		else {
 			if (ISSET(mask, position+7))
-			Moves.vector::emplace_back(Move(position, position + 7, 16, 0));
+			Moves.vector::emplace_back(position, position + 7, 16, 0);
 		}
 	}
 	else if ((RANK(position) - RANK(position + 7) == -1) && ((position + 7) == board.enpassant.top())) {
 		if (!fixes_check(Move(position, position + 7, 32, 0), B))
-			Moves.vector::emplace_back(Move(position, position + 7, 32, 0));
+			Moves.vector::emplace_back(position, position + 7, 32, 0);
 	}
 }
 void Castling(int colour, std::vector<Move>& Moves) {
@@ -400,22 +400,22 @@ void Castling(int colour, std::vector<Move>& Moves) {
 	if (colour) {
 		//short
 		if ((!(board.Occupancy & (1ULL << 5))) && !is_attacked(5,colour) && (!(board.Occupancy & (1ULL << 6))) && !is_attacked(6, colour) && (board.Types[3] & (1ULL << 7)) && (board.Types[5] & (1ULL << 4))) {
-			Moves.vector::emplace_back(Move(4, 6, 4, 5));
+			Moves.vector::emplace_back(4, 6, 4, 5);
 		}
 		//long
 		if ((!(board.Occupancy & (1ULL << 3))) && !is_attacked(3, colour) && (!(board.Occupancy & (1ULL << 2))) && !is_attacked(2, colour) && (!(board.Occupancy & (1ULL << 1))) && (board.Types[3] & (1ULL)) && (board.Types[5] & (1ULL << 4))) {
-			Moves.vector::emplace_back(Move(4, 2, 8, 5));
+			Moves.vector::emplace_back(4, 2, 8, 5);
 		}
 	}
 	//white
 	else {
 		//short
 		if ((!(board.Occupancy & (1ULL << 62))) && !is_attacked(62, colour) && (!(board.Occupancy & (1ULL << 61))) && !is_attacked(61, colour) && (board.Types[3] & (1ULL << 63)) && (board.Types[5] & (1ULL << 60))) {
-			Moves.vector::emplace_back(Move(60, 62, 4, 5));
+			Moves.vector::emplace_back(60, 62, 4, 5);
 		}
 		//long
 		if ((!(board.Occupancy & (1ULL << 59))) && !is_attacked(59, colour) && (!(board.Occupancy & (1ULL << 58))) && !is_attacked(58, colour) && (!(board.Occupancy & (1ULL << 57))) && (board.Types[3] & (1ULL << 56)) && (board.Types[5] & (1ULL << 60))) {
-			Moves.vector::emplace_back(Move(60, 58, 8, 5));
+			Moves.vector::emplace_back(60, 58, 8, 5);
 		}
 	}
 }
@@ -430,10 +430,10 @@ void KingTableMoves(uint64_t a, int colour, std::vector<Move>& Moves, int positi
 				if (!is_attacked(i * 8 + j,colour)) {
 					if ((t[i] >> j & 1) and (1 & ~((board.Occupancy >> (i * 8 + j))))) {
 
-						Moves.vector::emplace_back(Move(position, i * 8 + j, 0, k));
+						Moves.vector::emplace_back(position, i * 8 + j, 0, k);
 					}
 					else if ((t[i] >> j & 1) and ((board.colours[!colour] >> (i * 8 + j) & 1))) {
-						Moves.vector::emplace_back(Move(position, i * 8 + j, 16, k));
+						Moves.vector::emplace_back(position, i * 8 + j, 16, k);
 					}
 				}
 			}
@@ -504,7 +504,7 @@ void GenerateMoves(int colour, std::vector<Move>& Moves) {
 
 
 
-Move make_move(Move& move,bool colour) {
+Move make_move(Move& move, bool colour) {
 	//capture
     if (move.special & 16ULL) {
 		//clears to square
@@ -719,4 +719,74 @@ Info perft(int depth, int colour) {
 	}
 
 	return in;
+}
+
+
+int alg_to_coord(const std::string& square)
+{
+	int column = square[0] - 'a';
+	int row = 8 - (square[1] - '0');
+	return (8 * row + column);
+}
+
+
+
+Move* algebraic_to_move(std::string alg) {
+	int from = alg_to_coord(alg.substr(0, 2));
+	int to = alg_to_coord(alg.substr(2, 4));
+	int special = 0;
+	int type = 0;
+	if (ISSET(board.Types[p], from)) {
+		type = p;
+	}
+	if (ISSET(board.Types[b], from)) {
+		type = b;
+	}
+	if (ISSET(board.Types[n], from)) {
+		type = n;
+	}
+	if (ISSET(board.Types[r], from)) {
+		type = r;
+	}
+	if (ISSET(board.Types[q], from)) {
+		type = q;
+	}
+	if (ISSET(board.Types[k], from)) {
+		type = k;
+	}
+	if (abs(to - from) == 16 and (type == p)) {
+		special |= 1;
+	}
+	if ((RANK(to) == 0 or RANK(to) == 7) and (type == p)) {
+		special |= 2;
+	}
+	if (ISSET(board.Occupancy, to)) {
+		special |= 16;
+	}
+	if ((abs(to - from) == 7 or abs(to - from) == 9) and (type == p) and (NOTSET(board.Occupancy, to))) {
+		special |= 32;
+	}
+	if (type == k) {
+		if (from == 4) {
+			if (to == 6) {
+				special |= 4;
+			}
+			if (to == 2) {
+				special |= 8;
+			}
+		}
+		if (from == 60) {
+			if (to == 62) {
+				special |= 4;
+			}
+			if (to == 58) {
+				special |= 8;
+			}
+		}
+	}
+	return new Move(from, to, special, type);
+}
+
+std::string to_algebraic(int row, int col) {
+	return std::string(1, 'a' + col) + std::to_string(8 - row);
 }

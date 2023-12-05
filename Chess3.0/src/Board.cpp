@@ -94,3 +94,47 @@ void load_fen(std::string fen) {
     }
 
 }
+
+std::string create_fen(){
+    std::string row,fen;
+    int empty_count=0;
+	for(int i = 0; i<64;i++){
+        if (i % 8 == 0 and i!=0) {
+            if(empty_count!=0){
+                row += std::to_string(empty_count);
+                empty_count = 0;
+            }
+            fen += row + "/";
+            row = "";
+        }
+        if(ISSET(board.Occupancy,i)){
+	        if (empty_count!=0){
+                row += std::to_string(empty_count);
+                empty_count = 0;
+	        }
+            for (int j = 0; j < 6; j++) {
+                if (ISSET(board.Types[j], i)) {
+                    if (ISSET(board.colours[1], i)) {
+                        row += int_to_string[j + 6];
+                    }
+                    else {
+                        row += int_to_string[j];
+                    }
+                }
+            }
+        }
+        else{
+            empty_count++;
+        }
+        if (i == 63) {
+            if (empty_count != 0) {
+                row += std::to_string(empty_count);
+                empty_count = 0;
+            }
+            fen += row;
+            row = "";
+        }
+	}
+    fen += " " + int_to_colour[board.Currentcolour];
+    return fen;
+}

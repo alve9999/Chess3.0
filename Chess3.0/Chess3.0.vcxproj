@@ -172,6 +172,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="book.cpp" />
     <ClCompile Include="Chess3.0.cpp" />
     <ClCompile Include="src\Ai.cpp" />
     <ClCompile Include="src\Board.cpp" />
@@ -184,6 +185,7 @@
     <ClCompile Include="src\UCI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="book.h" />
     <ClInclude Include="src\Ai.h" />
     <ClInclude Include="src\Board.h" />
     <ClInclude Include="src\Bit.h" />
@@ -208,6 +210,9 @@
     <Image Include="wp.png" />
     <Image Include="wq.png" />
     <Image Include="wr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="opening_book.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

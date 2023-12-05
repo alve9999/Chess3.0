@@ -5,6 +5,8 @@
 #include <thread>
 #include <cmath>
 #include <atomic>
+#include "../book.h"
+
 Move* best_move;
 #define UNKNOWN 989
 
@@ -39,7 +41,7 @@ int MinMax(int depth,bool colour,float alpha,float beta, uint64_t key,float scor
 			unsigned long king;
 			_BitScanForward64(&king, board.colours[colour] & board.Types[k]);
 			if (is_attacked(king, colour)) {
-				return INFINITY;
+				return -(int)(1000000.0f)*(((float)depth));
 			}
 			else {
 				return 0;
@@ -83,7 +85,7 @@ void iterative_deepening(bool colour){
 
 	global_depth = 1;
 	while(!timeIsUp){
-		MinMax(global_depth, colour, -100000, 100000, create_hash(colour), score);
+		MinMax(global_depth, colour, -INFINITY, INFINITY, create_hash(colour), score);
 		printf("finished depth %d\n",global_depth);
 		global_depth++;
 	}
@@ -94,7 +96,23 @@ void timer(std::chrono::milliseconds duration) {
     timeIsUp = true;
 }
 
+bool book_used=false;
+
 Move* ai(int time,bool colour) {
+	if (!book_used) {
+		std::string fen = create_fen();
+		std::cout << fen << std::endl;
+		auto it = the_book->find(fen);
+		if(it != the_book->end()){
+			return algebraic_to_move(the_book->at(fen));
+		}
+		else{
+			std::cout << "went of book\n";
+			book_used = true;
+		}
+	}
+
+
 	int phase = 0;
 	phase += popCount64bit(board.Types[1]) * gamephaseInc[1];
 	phase += popCount64bit(board.Types[2]) * gamephaseInc[2];

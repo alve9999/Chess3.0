@@ -6,13 +6,15 @@
 #include <iostream>
 #include "Moves.h"
 #include "Ai.h"
+#include <chrono>
+#include <thread>
 
 sf::RectangleShape Black_square(sf::Vector2f(150, 150));
 
 sf::RectangleShape White_square(sf::Vector2f(150, 150));
 
 //hard code path becaus lazy
-std::string dir = "C:/Users/alvel/source/repos/alve9999/Chess3.0/Chess3.0/";
+std::string dir = "C:/Users/alvel/Desktop/Dev/C++/Chess/Chess3.0/";
 
 sf::RenderWindow window;
 
@@ -23,7 +25,7 @@ sf::Texture ssprites[12];
 sf::Clock deltaClock;
 
 bool colour = 1;
-bool your_colour =0;
+bool your_colour =1;
 int movedpiece;
 sf::Vector2i position;
 
@@ -129,10 +131,36 @@ void update_graphics() {
 	draw_board(window);
 	window.display();
 }
+void end_game(bool win) {
+	sf::Text text;
+	sf::Font font;
+	if (!font.loadFromFile("C:/Windows/Fonts/arial.ttf")) {
+		// Handle font loading error
+		printf("FAILURE TO LOAD FONT");
+		exit(-1);
+	}
+	text.setFont(font);
+	if (win) {
+		text.setString("You Won!");
+	}
+	else
+	{
+		text.setString("You Lost!");
+	}
+	text.setCharacterSize(250);
+	text.setFillColor(sf::Color::Red);
+	update_graphics();
+	window.draw(text);
+	window.display();
 
-void turn() {
+}
+
+bool turn() {
 	std::vector<Move> Moves;
 	GenerateMoves(colour, Moves);
+	if (Moves.size() == 0) {
+		return true;
+	}
 	update_graphics();
 	if ((your_colour == colour) or 0) {
 		bool yourturn = 1;
@@ -183,21 +211,27 @@ void turn() {
 	else {
 		sf::Event events;
 		window.pollEvent(events);
-		make_move(*ai(2000, colour), colour);
+		make_move(*ai(3000, colour), colour);
 		update_graphics();
 	}
 
-
+	return false;
 }
 
 void run_game() {
-	while (1) {
+	bool game_over = false;
+	while (!game_over) {
 		if (colour) {
 			colour = 0;
 		}
 		else {
 			colour = 1;
 		}
-		turn();
+		game_over = turn();
 	}
+	
+	end_game(colour != your_colour);
+	std::chrono::milliseconds duration(1000);
+	std::this_thread::sleep_for(duration);
+	while (true){}
 }

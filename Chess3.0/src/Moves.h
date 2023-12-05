@@ -48,3 +48,6 @@ std::ostream& operator<<(std::ostream& os, const Info& obj);
 
 Info perft(int depth, int colour);
 
+Move* algebraic_to_move(std::string alg);
+
+std::string to_algebraic(int row, int col);

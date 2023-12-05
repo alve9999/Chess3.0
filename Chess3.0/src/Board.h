@@ -14,6 +14,8 @@ constexpr int k = 5;
 constexpr int W = 0;
 constexpr int B = 1;
 
+const std::string int_to_string[12] = {"P","N","B","R","Q","K","p","n","b","r","q","k"};
+const std::string int_to_colour[2] = { "b","w" };
 void print_bitboard(uint64_t bitboard);
 
 struct Board {
@@ -35,5 +37,6 @@ struct Board {
 
 
 void load_fen(std::string fen);
+std::string create_fen();
 
 extern Board board;
